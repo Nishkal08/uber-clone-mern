@@ -99,4 +99,4 @@ This is a uber-clone build using MERN stack
 
 ---
 
-**Note:** All endpoints are prefixed with `/api/user` (adjust if your route prefix differs in your main app).
+**Note:** All endpoints are prefixed with `/users` (adjust if your route prefix differs in your main app).
