@@ -99,4 +99,118 @@ This is a uber-clone build using MERN stack
 
 ---
 
-**Note:** All endpoints are prefixed with `/users` (adjust if your route prefix differs in your main app).
+## Captain API Endpoints
+
+### 1. Register Captain
+- **Endpoint:** `POST /api/captain/register`
+- **Description:** Registers a new captain with email, password, full name, and vehicle details.
+- **Request Body:**
+  ```json
+  {
+    "email": "captain@example.com",
+    "password": "password123",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "vehicle": {
+      "plate": "XYZ123",
+      "vehicleType": "car",
+      "color": "Red",
+      "capacity": 4
+    }
+  }
+  ```
+- **Response:**
+  - `201 Created` on success
+  - Returns the created captain object and JWT token
+  ```json
+  {
+    "captain": {
+      "_id": "...",
+      "fullname": { "firstname": "Jane", "lastname": "Smith" },
+      "email": "captain@example.com",
+      "vehicle": {
+        "plate": "XYZ123",
+        "vehicleType": "car",
+        "color": "Red",
+        "capacity": 4
+      },
+      ...
+    },
+    "token": "<jwt-token>"
+  }
+  ```
+- **Validation Errors:**
+  - Invalid email, short password, missing fields, or invalid vehicle details will return `400` or `401` with error details.
+
+---
+
+### 2. Login Captain
+- **Endpoint:** `POST /api/captain/login`
+- **Description:** Authenticates a captain and returns a JWT token.
+- **Request Body:**
+  ```json
+  {
+    "email": "captain@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response:**
+  - `200 OK` on success
+  - Returns captain object and JWT token
+  ```json
+  {
+    "captain": { ... },
+    "token": "<jwt-token>"
+  }
+  ```
+- **Validation Errors:**
+  - Invalid credentials or missing fields will return `400` with error details.
+
+---
+
+### 3. Get Captain Profile
+- **Endpoint:** `GET /api/captain/profile`
+- **Description:** Returns the authenticated captain's profile.
+- **Headers:**
+  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Response:**
+  - `200 OK` with captain profile object
+  ```json
+  {
+    "_id": "...",
+    "fullname": { "firstname": "Jane", "lastname": "Smith" },
+    "email": "captain@example.com",
+    "vehicle": {
+      "plate": "XYZ123",
+      "vehicleType": "car",
+      "color": "Red",
+      "capacity": 4
+    },
+    ...
+  }
+  ```
+- **Errors:**
+  - `401 Unauthorized` if token is missing, invalid, or blacklisted.
+
+---
+
+### 4. Logout Captain
+- **Endpoint:** `POST /api/captain/logout`
+- **Description:** Logs out the captain by blacklisting the JWT token.
+- **Headers:**
+  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Response:**
+  - `200 OK` with message
+  ```json
+  {
+    "message": "Logout successful"
+  }
+  ```
+- **Errors:**
+  - `401 Unauthorized` if token is missing, invalid, or already blacklisted.
+
+---
+
+**Note:** All endpoints are prefixed with `/users` for user APIs and `/captains` for captain APIs (adjust if your route prefix differs in your main app).
