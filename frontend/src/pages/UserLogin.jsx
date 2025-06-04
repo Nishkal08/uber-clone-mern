@@ -6,7 +6,7 @@ const UserLogin = () => {
   const [password,setPassword] = useState('')
   const submitHandler = (e) => {
     e.preventDefault()
-    // Handle login logic here
+    
     setEmail('')
     setPassword('')
   }
