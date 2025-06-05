@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { userDataContext } from '../context/UserContext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { Loader } from '../components/Loader'
 
 export const CaptainProtectWrapper = ({children}) => {
@@ -22,7 +23,9 @@ export const CaptainProtectWrapper = ({children}) => {
                         authorization: `Bearer ${token}`
                     }
                 })
-                if ([200.201].includes(res.status)) {
+
+                if (res.status == 200 || res.status == 201) {
+                    console.log(res.status)
                     setUser(res.data)
                     setIsLoading(false)
                 }
@@ -34,7 +37,8 @@ export const CaptainProtectWrapper = ({children}) => {
                 navigate("/captain-login")
             }
     }
-    }, [token])
+    fetchData()
+    }, [ token ])
     if(isLoading)
     {
         return <Loader />

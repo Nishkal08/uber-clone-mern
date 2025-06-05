@@ -28,7 +28,7 @@ const registerCaptain = async (req, res, next) => {
         plate: vehicle.plate,
         color: vehicle.color,
         vehicleType: vehicle.vehicleType,
-        capacity: vehicle.capacity
+        capacity: vehicle.capacity  
     })
     if (!captain) {
         return res.status(400).json({ message: "Captain not created" });
@@ -69,7 +69,7 @@ const logoutCaptain = async(req,res) => {
     res.status(200).json({ message: "Logout successful" });
 }
 const getCaptainProfile = async(req,res) => {
-    return res.status(200).json(req.captain);
+    return res.status(201).json(req.captain);
 }
 module.exports = {
     registerCaptain,
