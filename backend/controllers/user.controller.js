@@ -4,7 +4,6 @@ const userService = require("../services/user.service")
 const blacklistTokenModel = require("../models/blacklistToken.model")
 
 const registerUser = async(req,res) => {
-    console.log("Entered controller",req.body)
     //validations
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -13,6 +12,7 @@ const registerUser = async(req,res) => {
     //create user
     const {fullname,email,password} = req.body
     const isUserExists = await userModel.findOne({ email })
+    console.log("Entered controller",req.body)
     if(isUserExists){
         return res.status(400).json({message:"User already exists"})
     }
