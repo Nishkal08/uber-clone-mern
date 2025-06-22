@@ -38,7 +38,6 @@ const CaptainSignUp = () => {
         capacity: vehicleCapacity
       }
     }
-    
     try{
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,newCaptain)
       console.log(res.data,"entered")
