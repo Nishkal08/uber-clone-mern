@@ -20,6 +20,7 @@ const UserLogin = () => {
       if(res.status === 200)
       {
           localStorage.setItem("token",res.data.token)  
+
           setUser(res.data.user)
           console.log(res.data)
           navigate("/home")

@@ -2,7 +2,6 @@ const userModel = require("../models/user.model")
 const { validationResult } = require("express-validator")
 const userService = require("../services/user.service")
 const blacklistTokenModel = require("../models/blacklistToken.model")
-
 const registerUser = async(req,res) => {
     //validations
     const errors = validationResult(req)
@@ -18,7 +17,6 @@ const registerUser = async(req,res) => {
     }
     // console.log("Password : ",password)
     const hashedPassword = await userModel.hashPassword(password)
-
     const user = await userService.createUser(
         {
             firstname:fullname.firstname,
@@ -31,7 +29,6 @@ const registerUser = async(req,res) => {
         return res.status(400).json({message:"User not created"})
     }
     const token = await user.generateAuthToken()
-
     res.status(201).json({user,token})
 
 }
@@ -55,11 +52,12 @@ const loginUser = async(req,res) => {
 
     const token = await user.generateAuthToken()
     res.cookie("token",token)
-    res.status(200).json({user,token,message:"Login successful"})
+
+    return res.status(200).json({user,token,message:"Login successful"})
 }
 
 const getUserProfile = async(req,res,next) => {
-    res.status(200).json(req.user)
+    return res.status(200).json(req.user)
 }
 const logoutUser = async(req,res,next) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];

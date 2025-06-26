@@ -12,20 +12,26 @@ const UserProtectWrapper = ({ children }) => {
   const token = localStorage.getItem("token")
 
  useEffect(() => {
+  if (!token) {
+    console.log("No token found, redirecting to login");
+    setIsLoading(false);
+    navigate("/user-login");
+    return;
+  }
   const fetchData = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
         headers: {
-          authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
-      });
+      }); 
 
       if ([200, 201].includes(res.status)) {
         setUser(res.data);
         setIsLoading(false);  
       }
     } catch (err) {
-      console.error("User Protect Wrapper error:", err.message);
+      console.error("User Protect Wrapper error:", err.response?.data.message || err.message);
       localStorage.removeItem("token");//If token is expired
       navigate("/user-login");
     }
@@ -33,7 +39,6 @@ const UserProtectWrapper = ({ children }) => {
 
   fetchData(); 
 }, [token]);
-
 
 
   if (isLoading) {
