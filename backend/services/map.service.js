@@ -54,8 +54,8 @@ const getAutoCompletes = async (location) => {
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(location)}&key=${apiKey}`
     try {
         const suggestions = await axios.get(url);
-        console.log(suggestions.data)
-        if (suggestions.data.status !== 'OK' || !suggestions.data.predictions.length) {
+        // console.log(suggestions.data)
+        if (suggestions.data.status !== 'OK') {
             //if suggestions array is empty
             throw new Error('No suggestions found')
         }

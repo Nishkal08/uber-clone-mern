@@ -1,53 +1,45 @@
 import React from 'react'
 import { useRef } from 'react';
 import gsap from 'gsap';
-export const LocationPanel = ({ setVehiclePanel, setPanelOpen }) => {
+import Loader2 from './Loader2';
+export const LocationPanel = ({ loading, tLoading, activeField, setPickup, setDestination, suggestions }) => {
 
 
-    const locations = [
-        {
-            
-            "name": "Third wave coffee",
-            "address": "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016"
-        },
-        {
-            "name": "Third wave coffee",
-            "address": "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016"
-        },
-        {
-            "name": "Third wave coffee",
-            "address": "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016"
-        },
-        {
-            "name": "Third wave coffee",
-            "address": "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016"
-        },
-        {
-            "name": "Third wave coffee",
-            "address": "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016"
+    const handleClick = (suggestion) => {
+        if (activeField === "pickup") {
+            setPickup(suggestion.description)
+        } else {
+            setDestination(suggestion.description)
         }
-    ]
+    }
+
+
     return (
-        <div>
-            {
-                locations.map((ele, idx) => {
-                    return (
-                        <div key={idx} 
-                        onClick={() => {
-                            setPanelOpen(false),
-                            setVehiclePanel(true)
-                        }}
-                        className='flex items-center mb-2 justify-start bg-white w-full px-3 pt-3'>
-                            <h4><i className="bg-[#EEEEEE]  rounded-full p-2.5 mr-3 ri-map-pin-2-fill"></i></h4>
-                            <div>
-                                <h4 className='text-lg font-semibold'>{ele.name}</h4>
-                                <div className='text-md'>{ele.address}</div>
-                                <hr className='mt-3 text-[#F6F6F6]'></hr>
-                            </div>
+        loading ? (
+            <div className="flex justify-center items-center h-64 w-full">
+                <Loader2 />
+            </div>
+        ) : (
+            <div>
+                {suggestions?.map((ele, idx) => (
+                    <div
+                        key={idx}
+                        onClick={() => handleClick(ele)}
+                        className="flex items-center mb-2 justify-start bg-white w-full px-3 pt-3"
+                    >
+                        <h4>
+                            <i className="bg-[#EEEEEE] rounded-full p-2.5 mr-3 ri-map-pin-2-fill"></i>
+                        </h4>
+                        <div>
+                            <h4 className="text-lg font-semibold">{ele.structured_formatting.main_text}</h4>
+                            <div className="text-md">{ele.description}</div>
+                            <hr className="mt-3 text-[#F6F6F6]" />
                         </div>
-                    )
-                })
-            }
-        </div>
-    )
+                    </div>
+                ))}
+            </div>
+        )
+    );
+
+
 }

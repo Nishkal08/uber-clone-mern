@@ -18,7 +18,7 @@ router.get("/get-distance-time",
 
 router.get("/get-suggestions",
     [
-        query("location").isString().isLength({ min: 3 }).withMessage("Location must be at least 3 characters."),
+        query("location").isString().isLength({min:3}).withMessage("Location must be at least 3 characters."),
         authUser
     ], mapController.getSuggestions
 )

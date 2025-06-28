@@ -62,7 +62,9 @@ const getSuggestions = async(req,res) => {
     try{
 
         const suggestions = await getAutoCompletes(location)
+        // console.log("Suggestions----------------", suggestions)
         return res.status(200).json(suggestions)
+
     }
     catch(err)
     {

@@ -11,7 +11,6 @@ const registerUser = async(req,res) => {
     //create user
     const {fullname,email,password} = req.body
     const isUserExists = await userModel.findOne({ email })
-    console.log("Entered controller",req.body)
     if(isUserExists){
         return res.status(400).json({message:"User already exists"})
     }
@@ -43,7 +42,6 @@ const loginUser = async(req,res) => {
     if(!user){
         return res.status(400).json({message:"Invalid credentials"})
     }
-    console.log(user)
     const isMatch = await user.comparePassword(password)
     
     if(!isMatch){
@@ -51,8 +49,9 @@ const loginUser = async(req,res) => {
     }
 
     const token = await user.generateAuthToken()
-    res.cookie("token",token)
 
+    res.cookie("token",token)
+    
     return res.status(200).json({user,token,message:"Login successful"})
 }
 

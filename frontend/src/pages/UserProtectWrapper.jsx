@@ -11,9 +11,9 @@ const UserProtectWrapper = ({ children }) => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
 
+
  useEffect(() => {
   if (!token) {
-    console.log("No token found, redirecting to login");
     setIsLoading(false);
     navigate("/user-login");
     return;
@@ -22,10 +22,10 @@ const UserProtectWrapper = ({ children }) => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          authorization: `Bearer ${token}`
         }
       }); 
-
+      // If the response is successful, set the user data and loading state
       if ([200, 201].includes(res.status)) {
         setUser(res.data);
         setIsLoading(false);  

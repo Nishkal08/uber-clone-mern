@@ -6,8 +6,7 @@ const authUser = async (req,res,next) => {
     
     // checks if user is logged in (authenticated) or not using token
 
-    const token = req.cookies.token || req.headers.Authorization?.split(" ")[1];
-
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if(!token){
         return res.status(401).json({message: "Authentication token is missing"});
     }
@@ -34,7 +33,7 @@ const authUser = async (req,res,next) => {
     }
 }
 const authCaptain = async (req,res,next) => {
-    const token = req.cookies.token || req.headers.Authorization?.split(" ")[1]
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
     if(!token){
         return res.status(401).json({message: "Authentication token is missing"});
     }

@@ -12,7 +12,7 @@ const getFares = async (pickup, destiantion) => {
 
         const prices = {
             moto: {
-                baseFare: 20,
+                baseFare: 15,
                 perkm: 5,
                 permin: 1,
                 fare(dist, time) {
@@ -22,7 +22,7 @@ const getFares = async (pickup, destiantion) => {
                 }
             },
             auto: {
-                baseFare: 35,
+                baseFare: 30,
                 perkm: 8,
                 permin: 2,
                 fare(dist, time) {
@@ -32,7 +32,7 @@ const getFares = async (pickup, destiantion) => {
                 }
             },
             car: {
-                baseFare: 75,
+                baseFare: 60,
                 perkm: 12,
                 permin: 3,
                 fare(dist, time) {
