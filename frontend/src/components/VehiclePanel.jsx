@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { useRef } from 'react'
 
 
-export const VehiclePanel = ({ vehiclePanelCloseRef, distanceTime, fares, setVehiclePanel, setConfirmRide }) => {
-    const [isSelected, setIsSelected] = useState([])
-    const handleClick=() => {
-         setConfirmRide(true)
-                    setVehiclePanel(false)
+export const VehiclePanel = ({ vehiclePanelCloseRef,setVehicleType, distanceTime, fares, setVehiclePanel, setConfirmRide }) => {
+    const handleClick=(vehicle) => {
+        setConfirmRide(true)
+        setVehiclePanel(false)
+        setVehicleType(vehicle)
     }
     
     return (
@@ -22,7 +22,7 @@ export const VehiclePanel = ({ vehiclePanelCloseRef, distanceTime, fares, setVeh
             <h3 className='text-2xl font-semibold mb-5 mt-3'>Choose a Vehicle</h3>
             {/* Vehicle card container */}
             <div className='flex flex-col h-fit items-center gap-3 '>
-                <div onClick={handleClick}
+                <div onClick={() => handleClick("motorcycle")}
                     key="1" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
                     <div className='flex justify-between items-center gap-2 w-full'>
                         <img className="h-15 w-15 object-contain" src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png"></img>
@@ -37,10 +37,7 @@ export const VehiclePanel = ({ vehiclePanelCloseRef, distanceTime, fares, setVeh
                         <div className='text-lg font-semibold'>₹{fares?.moto}</div>
                     </div>
                 </div>
-                <div onClick={() => {
-                    setConfirmRide(true)
-                    setVehiclePanel(false)
-                }} key="2" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
+                <div onClick={() => handleClick("car")} key="2" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
                     <div className='flex justify-between items-center gap-2 w-full'>
                         <img className="h-15 w-15 object-contain" src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_538,w_956/v1688398971/assets/29/fbb8b0-75b1-4e2a-8533-3a364e7042fa/original/UberSelect-White.png"></img>
                         <div className='flex flex-col'>
@@ -54,11 +51,7 @@ export const VehiclePanel = ({ vehiclePanelCloseRef, distanceTime, fares, setVeh
                         <div className='text-lg font-semibold'>₹{fares?.car}</div>
                     </div>
                 </div>
-                <div onClick={() => {
-                    setConfirmRide(true)
-                    setVehiclePanel(false)
-                }}
-                    key="3" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
+                <div onClick={() => handleClick("auto")} key="3" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
                     <div className='flex justify-between items-center gap-2 w-full'>
                         <img className="h-15 w-15 object-contain" src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png"></img>
                         <div className='flex flex-col'>

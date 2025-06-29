@@ -2,7 +2,7 @@ import React from 'react'
 import { useRef } from 'react';
 import gsap from 'gsap';
 import Loader2 from './Loader2';
-export const LocationPanel = ({ loading, tLoading, activeField, setPickup, setDestination, suggestions }) => {
+export const LocationPanel = ({ loading, activeField, setPickup, setDestination, suggestions }) => {
 
 
     const handleClick = (suggestion) => {
@@ -16,7 +16,7 @@ export const LocationPanel = ({ loading, tLoading, activeField, setPickup, setDe
 
     return (
         loading ? (
-            <div className="flex justify-center items-center h-64 w-full">
+            <div className="flex justify-center items-center h-full w-full">
                 <Loader2 />
             </div>
         ) : (

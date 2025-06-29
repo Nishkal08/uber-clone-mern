@@ -44,6 +44,7 @@ const Home = () => {
   const [fares, setFares] = useState({})
   const [distanceTime, setDistanceTime] = useState({})
   const [loading, setLoading] = useState(false)
+  const [vehicleType, setVehicleType] = useState("")
 
   const SubmitHandler = () => {
     e.preventDefault()
@@ -131,15 +132,40 @@ get-suggestions`, {
       console.log("Distance and Time:", distanceTime.data)
       setFares(fares.data)
       setDistanceTime(distanceTime.data)
-      setLoading(false)
       setPanelOpen(false)
       setVehiclePanel(true)
     } catch (error) {
       console.log("Error fetching fares and distance/time", error);
     }
+    finally {
+
+      setLoading(false)
+    }
   }
 
-
+  const createRide = async (pickup, destination, vehicleType) => {
+    try {
+      console.warn("token : ", localStorage.getItem("token"))
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/ride/create-ride`,
+        {
+          pickup,
+          destination,
+          vehicleType
+        },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+      setConfirmRide(false);
+      setVehicleFound(true);
+      return res.data;
+    } catch (err) {
+      console.log("Error creating ride", err.response?.data || err.message)
+    } 
+  }
 
   useGSAP(function () {
     if (panelOpen) {
@@ -332,6 +358,7 @@ get-suggestions`, {
           vehiclePanelCloseRef={vehiclePanelCloseRef}
           fares={fares}
           distanceTime={distanceTime}
+          setVehicleType={setVehicleType}
           setConfirmRide={setConfirmRide}
           setVehiclePanel={setVehiclePanel}>
         </VehiclePanel>
@@ -342,15 +369,17 @@ get-suggestions`, {
         <ConfirmRide
           pickup={pickup}
           destination={destination}
+          createRide={createRide}
           fares={fares}
-          setConfirmRide={setConfirmRide}
+          vehicleType={vehicleType}
+      
           confirmRidePanelClose={confirmRidePanelClose}
-          setVehicleFound={setVehicleFound}
+        
         ></ConfirmRide>
       </div>
       <div ref={vehicleFoundRef}
         className='fixed w-full z-20 bottom-0 translate-y-full bg-white-100'
-      > 
+      >
         <LookingForDriver
           pickup={pickup}
           destination={destination}

@@ -11,5 +11,14 @@ router.get("/get-fares",
     authUser,
     rideController.getFare
 )
+router.post("/create-ride",
+    [
+        body("pickup").isString().isLength({ min: 3 }).withMessage("Invalid pickup address"),
+        body("destination").isString().isLength({ min: 3 }).withMessage("Invalid destination address"),
+        body("vehicleType").isIn(["car", "motorcycle", "auto"]).withMessage("Invalid vehicle type")
+    ],
+    authUser,
+    rideController.createRide
+)
 
 module.exports = router
