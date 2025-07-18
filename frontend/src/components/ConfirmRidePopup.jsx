@@ -1,15 +1,46 @@
+import axios from 'axios'
 import React, { use } from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-const ConfirmRidePopup = ({ ConfirmRidePopUpCloseRef, setridePopUpPanel, setConfirmRidePopUpPanel }) => {
+
+const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, setConfirmRidePopUpPanel }) => {
     const [OTP, setOTP] = useState("")
     const navigate = useNavigate()
-    const submitHandler = async(e) => {
-        e.preventDefault()
-        // console.log(e)
-        navigate("/captain-ride")
-    }
+    console.log("token : ", localStorage.getItem("token"))
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/ride/start-ride`,
+                {
+                    rideId: ride._id,
+                    otp: OTP
+                },
+                {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+            console.warn("status : ", res.status, res.data);
+            if (res.status === 200 || res.status === 201) {
+                setConfirmRidePopUpPanel(false);
+                setridePopUpPanel(false);
+                navigate("/captain-ride", {
+                    state: {
+                        ride: res.data
+                    }
+                });
+            } else {
+                alert("Unexpected response from server");
+            }
+        } catch (err) {
+            console.error("Error starting ride:", err.response?.data || err.message);
+            // alert("Error: " + (err.response?.data?.message || err.message));
+        }
+    };
+
     return (
         <div className='bg-white h-screen w-full rounded-md overflow-auto relative py-2'>
             <div
@@ -25,11 +56,11 @@ const ConfirmRidePopup = ({ ConfirmRidePopUpCloseRef, setridePopUpPanel, setConf
             <div className="p-4 my-5 mx-2 rounded-xl shadow-xs bg-neutral-50 flex justify-between items-center ">
                 <div className="flex gap-3 text-center justify-start items-center">
                     <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg"></img>
-                    <p className="text-lg capitalize font-semibold">Melisandre</p>
+                    <p className="text-lg capitalize font-semibold">{ride?.user?.fullname?.firstname + " " + ride.user?.fullname?.lastname}</p>
                 </div>
                 <div className="">
-                    <p className="text-xl font-semibold">2.2km</p>
-                    <p className="text-sm leading-2 text-gray-500">₹200</p>
+                    <p className="text-xl font-semibold">{Math.round((ride?.distance) / 1000, 2)} km</p>
+                    <p className="text-sm leading-2 text-gray-500">₹{ride?.fare}</p>
                 </div>
             </div>
             <div>
@@ -40,8 +71,8 @@ const ConfirmRidePopup = ({ ConfirmRidePopUpCloseRef, setridePopUpPanel, setConf
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-map-pin-2-fill text-lg"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >562/11-A</span>
-                        <span className='tex-sm text-[#545454]'>New Ranip,Ahmedabad, Gujarat</span>
+                        <span className='text-xl font-[650]' >Pickup Location</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.pickup}</span>
                         <span className='text-sm text-gray-400 font-md'>Pickup</span>
                         <hr className='mt-2 w-full text-[#E9E9E9]'></hr>
                     </div>
@@ -49,8 +80,8 @@ const ConfirmRidePopup = ({ ConfirmRidePopUpCloseRef, setridePopUpPanel, setConf
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-square-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >Third wave coffee</span>
-                        <span className='tex-sm text-[#545454]'>Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016</span>
+                        <span className='text-xl font-[650]' >Drop Off Location</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.destination}</span>
                         <span className='text-sm text-gray-400 font-md'>Drop</span>
 
                         <hr className='my-3 w-full text-[#E9E9E9]'></hr>
@@ -59,17 +90,17 @@ const ConfirmRidePopup = ({ ConfirmRidePopUpCloseRef, setridePopUpPanel, setConf
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-bank-card-2-fill text-md"></i>
                     <div className='flex w-full mt-2  flex-col'>
-                        <span className='text-xl font-[650]'>₹200</span>
+                        <span className='text-xl font-[650]'>₹{ride?.fare}</span>
                         <span className='tex-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>
                 <div className='w-full flex flex-col justify-between px-3 mt-6'>
                     <form onSubmit={submitHandler}>
                         {/* OTP */}
-                        <input placeholder="Enter OTP" 
-                        value={OTP}
-                        onChange={(e) => {setOTP(e.target.value)}}
-                        className="bg-[#EEEEEE] font-mono p-3 text-lg w-full  placeholder:text-base rounded-lg mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                        <input placeholder="Enter OTP"
+                            value={OTP}
+                            onChange={(e) => { setOTP(e.target.value) }}
+                            className="bg-[#EEEEEE] font-mono p-3 text-lg w-full  placeholder:text-base rounded-lg mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                         ></input>
                         <button
                             className='w-full flex justify-center items-center bg-black text-white rounded-lg font-semibold mb-4 py-3'

@@ -17,9 +17,14 @@ const authUser = async (req,res,next) => {
     }
     try{
        const decodedToken =  jwt.verify(token,process.env.JWT_SECRET_KEY)
+
+
        const user = await userModel.findById(decodedToken._id);
+
+       
        if(!user)
        {
+        
             return res.status(401).json({message:"User Not Found"})
        }
 
@@ -29,6 +34,8 @@ const authUser = async (req,res,next) => {
     }
     catch(err)
     {
+        console.log("auth error: "+err);
+        
         return res.status(401).json({message:"unauthorized",error:err.message})
     }
 }

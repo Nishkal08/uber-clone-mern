@@ -2,11 +2,17 @@ import React, { useState, useContext } from 'react'
 import { RideDataContext } from '../context/RideContext'
 import CardLoader from './CardLoader'
 import { toast, ToastContainer, Bounce } from 'react-toastify'
+
+
+
+
+
 export const ConfirmRide = ({
     pickup,
     createRide,
     vehicleType,
     destination,
+    setConfirmRide,
     fares,
     confirmRidePanelClose
 
@@ -79,7 +85,7 @@ export const ConfirmRide = ({
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i className="ri-bank-card-2-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]'>₹{fares?.car}</span>
+                        <span className='text-xl font-[650]'>₹{fares[vehicleType] || fares?.moto}</span>
                         <span className='text-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>

@@ -8,7 +8,6 @@ const rideModel = new mongoose.Schema({
     captain:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"captain",
-        required:true
     },
     pickup:{
         type:String,
@@ -35,7 +34,7 @@ const rideModel = new mongoose.Schema({
     },
     vehicleType:{
         type:String,
-        enum:["car","motorcycle","auto"] 
+        enum:["car","moto","auto"] 
     },
     paymentID: {
         type: String,

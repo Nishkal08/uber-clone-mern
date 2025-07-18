@@ -1,7 +1,28 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
-const FinishRide = ({ setFinishRidePopUp , finishRideCloseRef }) => {
+const FinishRide = ({ setFinishRidePopUp, ride, finishRideCloseRef }) => {
+    const navigate = useNavigate()
+    const finishRide = async () => {
+        console.log("clicked=======")
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/ride/end-ride/`,
+            {
+                rideId: ride._id
+            },
+            {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+        if(res.status == 200)
+        {
+            setFinishRidePopUp(false)
+            navigate("/captain-home")
+        }
+    }
+
     return (
         <div className='bg-white h-full w-full rounded-md overflow-auto relative py-2'>
             <div
@@ -13,15 +34,15 @@ const FinishRide = ({ setFinishRidePopUp , finishRideCloseRef }) => {
             >
                 <i className="ri-arrow-down-wide-line"></i>
             </div>
-            <span className='text-black text-2xl font-semibold my-3 p-4'>New Ride For You!</span>
+            <span className='text-black text-2xl font-semibold my-3 p-4'>Complete Ride!</span>
             <div className="p-4 my-5 mx-2 rounded-xl shadow-xs bg-neutral-50 flex justify-between items-center ">
                 <div className="flex gap-3 text-center justify-start items-center">
                     <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg"></img>
-                    <p className="text-lg capitalize font-semibold">Melisandre</p>
+                    <p className="text-lg capitalize font-semibold">{ride?.user?.fullname?.firstname + " " + ride?.user?.fullname?.lastname}</p>
                 </div>
                 <div className="">
-                    <p className="text-lg font-semibold">₹200</p>
-                    <p className="text-sm leading-2 text-gray-500">2.2km</p>
+                    <p className="text-lg font-semibold">₹{ride?.fare}</p>
+                    <p className="text-sm leading-2 text-gray-500">{Math.round((ride?.distance) / 1000, 2)} Km</p>
                 </div>
             </div>
             <div>
@@ -32,8 +53,8 @@ const FinishRide = ({ setFinishRidePopUp , finishRideCloseRef }) => {
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-map-pin-2-fill text-lg"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >562/11-A</span>
-                        <span className='tex-sm text-[#545454]'>New Ranip,Ahmedabad, Gujarat</span>
+                        <span className='text-xl font-[650]' >Pickup Location</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.pickup}</span>
                         <span className='text-sm text-gray-400 font-md'>Pickup</span>
                         <hr className='mt-2 w-full text-[#E9E9E9]'></hr>
                     </div>
@@ -41,8 +62,8 @@ const FinishRide = ({ setFinishRidePopUp , finishRideCloseRef }) => {
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-square-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >Third wave coffee</span>
-                        <span className='tex-sm text-[#545454]'>Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016</span>
+                        <span className='text-xl font-[650]' >Drop Off Location</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.destination}</span>
                         <span className='text-sm text-gray-400 font-md'>Drop</span>
 
                         <hr className='my-3 w-full text-[#E9E9E9]'></hr>
@@ -51,17 +72,18 @@ const FinishRide = ({ setFinishRidePopUp , finishRideCloseRef }) => {
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-bank-card-2-fill text-md"></i>
                     <div className='flex w-full mt-2  flex-col'>
-                        <span className='text-xl font-[650]'>₹200</span>
+                        <span className='text-xl font-[650]'>₹{ride?.fare}</span>
                         <span className='tex-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>
                 {/* bottom navigation */}
                 <div className='w-full px-3 mt-6'>
-                    <Link to="/captain-home"
+                    <button to="/captain-home"
+                        onClick={finishRide}
                         className='w-full  flex justify-center items-center bg-black text-white rounded-lg font-semibold mb-2 py-3'
                     >
                         Finish Ride
-                    </Link>
+                    </button>
                     <p className='capitalize text-center text-sm text-red-500'>Click on <strong>finish ride </strong>if payment is completed  </p>
                 </div>
             </div>

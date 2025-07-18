@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
+import { useLocation } from 'react-router-dom'
 import gsap from 'gsap'
 import { useState } from 'react'
 import { useRef } from 'react'
@@ -10,6 +11,10 @@ const CaptainRiding = () => {
   const [finishRidePopUp, setFinishRidePopUp] = useState(false)
   const finishRideRef = useRef(null)
   const finishRideCloseRef = useRef(null)
+  const location = useLocation()
+  const ride = location.state?.ride
+  
+  
   useGSAP(() => {
     if (finishRidePopUp) {
       gsap.to(finishRideRef.current, {
@@ -56,7 +61,7 @@ const CaptainRiding = () => {
           <div className='flex mt-3 justify-start gap-3 w-full'>
             <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg"></img>
             <div className='capitalize text-xl font-semibold'>
-              <p>4.4 Km</p>
+              <p>{Math.round((ride?.distance)/1000,2)} Km</p>
               <div className='text-sm leading-3 text-gray-400'>away</div>
             </div>
           </div>
@@ -77,6 +82,7 @@ const CaptainRiding = () => {
           ref={finishRideRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
         >
           <FinishRide
+            ride={ride}
             setFinishRidePopUp={setFinishRidePopUp}
             finishRideCloseRef={finishRideCloseRef}
           />

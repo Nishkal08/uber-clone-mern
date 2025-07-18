@@ -32,7 +32,6 @@ const UserProtectWrapper = ({ children }) => {
       }
     } catch (err) {
       console.error("User Protect Wrapper error:", err.response?.data.message || err.message);
-      localStorage.removeItem("token");//If token is expired
       navigate("/user-login");
     }
   };

@@ -1,18 +1,25 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CaptainDetails from '../components/CaptainDetails'
 import RidePopUp from '../components/RidePopUp'
 import { useGSAP } from '@gsap/react'
+import { captainDataContext } from '../context/CaptainContext'
 import gsap from 'gsap'
 import ConfirmRidePopup from '../components/ConfirmRidePopup'
+import { useContext } from 'react'
+import { SocketContext } from '../context/SocketContext'
+import { RideDataContext } from '../context/RideContext'
+import LiveTracking from '../components/LiveTracking'
+import axios from 'axios'
 export const CaptainHome = () => {
   const ridePopUpRef = useRef(null)
   const ConfirmRidePopUpRef = useRef(null)
   const ridePopUpCloseRef = useRef(null)
   const ConfirmRidePopUpCloseRef = useRef(null)
-  
+  const { captain ,setCaptain } = useContext(captainDataContext)
+  const { ride, setRide } = useContext(RideDataContext)
   const [ridePopUpPanel, setridePopUpPanel] = useState(false)
-  const [ConfirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(true)
+  const [ConfirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
   useGSAP(() => {
     if (ridePopUpPanel) {
       gsap.to(ridePopUpRef.current, {
@@ -60,36 +67,109 @@ export const CaptainHome = () => {
         })
     }
   }, [ConfirmRidePopUpPanel])
-return (
-  <div>
-    <div className="fixed flex top-1 p-4 items-center w-screen justify-between">
-      <img className='w-15 top-5 left-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
-      <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl' >
-        <i class="ri-logout-box-line"></i>
-      </Link>
-    </div>
-    <div className='h-screen w-screen'>
-      <img className='h-3/5 w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"></img>
-      <div className='h-2/5 overflow-hidden'>
-        <CaptainDetails />
+
+  const { socket } = useContext(SocketContext)
+
+  useEffect(() => {
+    console.warn("useEffect called")
+    console.warn(captain)
+    socket.emit("join", {
+      userType: "captain",
+      userId: captain._id
+    })
+
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log("position", position.coords)
+          const { latitude, longitude } = position.coords;
+          socket.emit("update-location-captain", {
+            userId: captain._id,
+            location: {
+              ltd: latitude,
+              lng: longitude
+            }
+          })
+          const newCaptain = axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`)
+          if(newCaptain)
+          {
+            setCaptain(newCaptain.data.captain)
+          }
+        })
+      }
+      else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    }
+    const interval = setInterval(updateLocation, 8000);
+    updateLocation()
+  }, [socket])
+
+  socket.on("new-ride", (data) => {
+    console.log("Entered here----------------------")
+    setRide(data)
+    setridePopUpPanel(true)
+  })
+
+  async function confirmRide() {
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/ride/confirm-ride`, {
+
+      rideId: ride._id,
+      captainId: captain._id,
+
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    setridePopUpPanel(false)
+    setConfirmRidePopUpPanel(true)
+
+  }
+
+
+  return (
+    <div>
+      <div>
+        {captain?.socketId}
       </div>
-      <div
-        ref={ridePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
-      >
-        <RidePopUp ridePopUpCloseRef={ridePopUpCloseRef}
+      <div className="fixed flex top-1 p-4 items-center w-screen justify-between">
+        <img className='w-15 top-5 left-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
+        <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl' >
+          <i class="ri-logout-box-line"></i>
+        </Link>
+      </div>
+      <div className='h-screen w-screen'>
+        <div className='h-3/5'>
+          <LiveTracking />
+        </div>
+        <div className='h-2/5 bg-white overflow-hidden'>
+          <CaptainDetails />
+        </div>
+        <div
+          ref={ridePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
+        >
+          <RidePopUp ridePopUpCloseRef={ridePopUpCloseRef}
+          ride={ride}
+          confirmRide={confirmRide}
           setridePopUpPanel={setridePopUpPanel}
           setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
-      </div>
-
-      <div
-        ref={ConfirmRidePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
-      >
-        <ConfirmRidePopup 
-          ConfirmRidePopUpCloseRef={ConfirmRidePopUpCloseRef}
-          setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} 
+        </div>
+        <div
+          ref={ConfirmRidePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
+        >
+          <ConfirmRidePopup
+            ride={ride}
+            ConfirmRidePopUpCloseRef={ConfirmRidePopUpCloseRef}
+            setridePopUpPanel={setridePopUpPanel}
+            setConfirmRidePopUpPanel={setConfirmRidePopUpPanel}
           />
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
 }

@@ -13,7 +13,7 @@ const CaptainLogin = () => {
     e.preventDefault()
     try{
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`,{email,password})
-      if(res.status === 200)
+      if(res.status === 200 || res.status === 201)
       {
           localStorage.setItem("token",res.data.token)
           console.log(res.data)

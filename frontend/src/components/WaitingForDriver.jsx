@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export const WaitingForDriver = ({ waitingForDriverCloseRef, setWaitingForDriver }) => {
+export const WaitingForDriver = ({ ride,waitingForDriverCloseRef, setWaitingForDriver }) => {
 
     return (
         <div className='bg-white h-full w-full rounded-md overflow-auto relative  py-2'>
@@ -17,35 +17,52 @@ export const WaitingForDriver = ({ waitingForDriverCloseRef, setWaitingForDriver
             </div>
             
             <div className='flex flex-col items-center'>
+                <span className='text-2xl font-semibold'>Waiting For Driver</span>
+                {/* OTP Section */}
+                <div className='flex flex-col items-center my-4'>
+                    <span className='text-lg text-gray-600 mb-1'>Your OTP</span>
+                    <div className='flex gap-2'>
+                        {ride?.otp?.toString().split('').map((digit, idx) => (
+                            <span
+                                key={idx}
+                                className='w-10 h-12 flex items-center justify-center bg-gray-100 rounded-md text-2xl font-bold tracking-widest border border-gray-300'
+                            >
+                                {digit}
+                            </span>
+                        ))}
+                    </div>
+                    <span className='text-xs text-gray-400 mt-1'>Share this OTP with your driver</span>
+                </div>
+                {/* Driver and Ride Details */}
                 <div className='flex w-full px-4 my-3 justify-between items-center'>
                     <img className="h-15 my-3" src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_538,w_956/v1688398971/assets/29/fbb8b0-75b1-4e2a-8533-3a364e7042fa/original/UberSelect-White.png" alt="" />
                     <div>
-                        <div className='text-md text-gray-500 font-md'>SANTH</div>
-                        <div className='text-2xl font-bold'>KA15K00-0</div>
-                        <div className='text-sm text-gray-400'>White suzuki S-presso LXI</div>
+                        <div className='text-md text-gray-500 font-md'>{ride?.captain?.fullname?.firstname + " " + ride?.captain?.fullname?.lastname}</div>
+                        <div className='text-2xl font-bold'>{ride?.captain?.vehicle?.plate}</div>
+                        <div className='text-sm text-gray-400'>{ride?.captain?.vehicle?.vehicleType}</div>
                     </div>
                 </div>
                 <hr className='mt-2 w-full text-[#E9E9E9]'></hr>
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
-                    <i class="ri-map-pin-2-fill text-lg"></i>
+                    <i className="ri-map-pin-2-fill text-lg"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >562/11-A</span>
-                        <span className='tex-sm text-[#545454]'>New Ranip,Ahmedabad, Gujarat</span>
+                        <span className='text-xl font-[650]' >Pickup</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.pickup}</span>
                         <hr className='mt-2 w-full text-[#E9E9E9]'></hr>
                     </div>
                 </div>
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
-                    <i class="ri-square-fill text-md"></i>
+                    <i className="ri-square-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]' >Third wave coffee</span>
-                        <span className='tex-sm text-[#545454]'>Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016</span>
+                        <span className='text-xl font-[650]' >Drop Off</span>
+                        <span className='tex-sm text-[#545454]'>{ride?.destination}</span>
                         <hr className='my-3 w-full text-[#E9E9E9]'></hr>
                     </div>
                 </div>
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
-                    <i class="ri-bank-card-2-fill text-md"></i>
+                    <i className="ri-bank-card-2-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]'>₹200</span>
+                        <span className='text-xl font-[650]'>₹{ride?.fare}</span>
                         <span className='tex-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>

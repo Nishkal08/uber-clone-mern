@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const { getDistanceT } = require("./map.service");
-
+const rideModel = require("../models/ride.model")
 const getFares = async (pickup, destination) => {
     if (!pickup || !destination) {
         throw new Error("Pickup and destination are required");
@@ -34,8 +34,7 @@ const getOtp = (num) => {
     return otp;
 };
 
-const createRide = async ({user,pickup, destination, vehicleType}) => {
-    console.log("Creating ride with user:\n", user, "\npickup:\n", pickup, "\ndestination:\n", destination, "\nvehicleType:\n", vehicleType);
+const createRide = async ({ user, pickup, destination, vehicleType }) => {
     if (!user || !pickup || !destination || !vehicleType) {
         throw new Error("Pickup, user ,destination and vehicle type are required");
     }
@@ -45,29 +44,121 @@ const createRide = async ({user,pickup, destination, vehicleType}) => {
         if (!distanceTime) {
             throw new Error("Unable to get distance and time");
         }
-        console.warn("vehicleType", vehicleType);
-        if(vehicleType === "motorcycle") {
-            vehicleType = "moto";
+        if (vehicleType === "motorcycle") {
+            vehicleType = "moto"; pickup
         }
         if (!fare[vehicleType]) {
             throw new Error("Invalid vehicle type");
         }
-        return {
+        const ride = rideModel.create({
             user,
             pickup,
             destination,
             vehicleType,
             fare: fare[vehicleType],
             distance: distanceTime.distance.value,
-            duration: distanceTime.duration.value, 
+            duration: distanceTime.duration.value,
             otp: getOtp(6)
-        };
+        })
+        return ride;
     } catch (err) {
         throw new Error("Error occured during ride creation: " + err.message);
     }
 };
 
+const confirmRide = async ({ rideId, captainId }) => {
+    if (!rideId || !captainId) {
+        throw new Error("Ride id and captain id are required")
+    }
+    try {
+        await rideModel.findOneAndUpdate({ _id: rideId }, {
+            status: "accepted",
+            captain: captainId
+        })
+        const ride = await rideModel.findOne({ _id: rideId }).populate("user").populate("captain").select("+otp")
+        if (!ride) {
+            throw new Error("Ride not found")
+        }
+        return ride
+    }
+    catch (err) {
+        console.log(err)
+        throw new Error("Error occured during ride confirmation: " + err.message);
+    }
+}
+
+    const startRide = async ({ rideId, otp , captainId }) => {
+        if (!rideId || !otp) {
+            throw new Error("Ride and otp are required")
+        }
+        try {
+            console.log("RIde id : ",rideId)
+            console.log("captain id : ",captainId)
+            let ride = await rideModel.findOne(
+                { 
+                    _id: rideId ,
+                    captain: captainId
+                }
+            ).populate("user").populate("captain").select("+otp")
+            if (!ride) {
+                throw new Error("Ride not found")
+            }
+            if (ride.otp !== otp) {
+                throw new Error("Invalid otp")
+            }
+            ride = await rideModel.findOneAndUpdate(
+                {
+                    _id: ride._id
+                },
+                {
+                    status: "ongoing"
+                },
+                {
+                    new: true
+                }
+            ).populate("user").populate("captain").select("+otp")
+            return ride
+        }
+        catch (err) {
+            throw new Error("Error occured during ride start: " + err.message);
+        }
+
+    }
+const endRide = async ({ rideId , captainId }) =>
+{
+    if(!rideId)
+    {
+    throw new Error("Ride id is required")
+    }
+    let ride = await rideModel.findOne(
+        {
+            _id: rideId,
+            captain: captainId
+        }
+    )
+    if(!ride)
+    {
+        throw new Error("Ride not found")
+    }
+     ride = await rideModel.findOneAndUpdate(
+        {
+            _id: ride._id
+        },
+        {
+            status: "completed"
+        },
+        {
+            new: true
+        }
+    ).populate("user").populate("captain").select("+otp")
+    return ride
+}
+
+
 module.exports = {
     getFares,
-    createRide
+    createRide,
+    confirmRide,
+    startRide,
+    endRide
 };

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export const LookingForDriver = ({ pickup, destination, fares,vehicleFoundCloseRef, setVehicleFound }) => {
+export const LookingForDriver = ({ pickup, destination,vehicleType, fares,vehicleFoundCloseRef, setVehicleFound }) => {
 
     return (
         <div className='bg-white h-full w-full rounded-md overflow-auto relative  py-2'>
@@ -38,7 +38,7 @@ export const LookingForDriver = ({ pickup, destination, fares,vehicleFoundCloseR
                 <div className='w-full px-3 flex gap-5 justify-start items-center'>
                     <i class="ri-bank-card-2-fill text-md"></i>
                     <div className='flex w-full mt-2 flex-col'>
-                        <span className='text-xl font-[650]'>₹{fares?.car}</span>
+                        <span className='text-xl font-[650]'>₹{fares[vehicleType] || fares?.moto}</span>
                         <span className='tex-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>
