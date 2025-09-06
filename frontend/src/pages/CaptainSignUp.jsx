@@ -16,52 +16,82 @@ const CaptainSignUp = () => {
   const [vehicleCapacity, setvehicleCapacity] = useState("")
   const [vehiclePlate, setvehiclePlate] = useState("")
   const [vehicleColor, setvehicleColor] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
+  const [passwordError, setPasswordError] = useState('')
   const navigate = useNavigate()
 
 
   const { captain, setCaptain } = useContext(captainDataContext)
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
 
     e.preventDefault()
     // Handle login logic here
-    const newCaptain = { 
+    const newCaptain = {
       fullname: {
         firstname: firstName,
         lastname: lastName
       },
       email: email,
       password: password,
-      vehicle:{
+      vehicle: {
         plate: vehiclePlate,
         color: vehicleColor,
         vehicleType: vehicleType,
         capacity: vehicleCapacity
       }
     }
-    try{
-      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,newCaptain)
-      console.log(res.data,"entered")
-      if(res.status === 201){
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, newCaptain)
+      console.log(res.data, "entered")
+      if (res.status === 201) {
         setCaptain(res.data.captain)
         setCaptainData(res.data.captain)
-        localStorage.setItem("token",res.data.token)
+        localStorage.setItem("token", res.data.token)
         console.log(captainData)
         navigate("/captain-home")
       }
     }
-    catch(err)
-    {
-      console.log("Captain Sign up error : ",err.message)
+    catch (err) {
+      if (err.response?.status === 400) {
+        const errorMessage = err.response?.data?.message || 'Invalid registration data';
+        toast.error(errorMessage);
+      } else if (err.response?.status === 409) {
+        toast.error('Email already exists. Please use a different email');
+      } else if (err.response?.status >= 500) {
+        toast.error('Server error. Please try again later');
+      } else if (!err.response) {
+        toast.error('Network error. Check your connection');
+      } else {
+        const errorMessage = err.response?.data?.message || 'Registration failed. Please try again';
+        toast.error(errorMessage);
+      }
+
+      console.log("Captain Sign up error : ", err.message)
     }
-    setFirstName('')
-    setLastName('')
-    setEmail('')
-    setPassword('')
-    setvehicleType("")
-    setvehicleCapacity("")
-    setvehiclePlate("")
-    setvehicleColor("")
+    finally {
+            setIsLoading(false)
+            setFirstName('')
+            setLastName('')
+            setEmail('')
+            setPassword('')
+            setvehicleType("")
+            setvehicleCapacity("")
+            setvehiclePlate("")
+            setvehicleColor("")
+        }
   }
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    if (value.length >= 0 && value.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+    } else {
+      setPasswordError('');
+    }
+  }
+
   return (
     <div className='h-screen flex flex-col relative'>
       <div className='flex-1 px-7 py-5 flex flex-col gap-7'>
@@ -86,9 +116,17 @@ const CaptainSignUp = () => {
             placeholder='password'
             value={password}
             onChange={(e) => {
+              handlePasswordChange(e)
               setPassword(e.target.value)
             }}
-          />
+            />
+            {passwordError && (
+              <p className="text-red-500 text-sm mb-5">{passwordError}</p>
+            )}
+  
+            {!passwordError && (
+              <div className="mb-7"></div>
+            )}
 
           {/* Vehicle Info Group */}
           <h3 className='text-lg font-medium mb-2'>Vehicle Information</h3>
@@ -127,13 +165,18 @@ const CaptainSignUp = () => {
               type="number"
               min="1"
               placeholder="Vehicle Capacity"
+              
               className="bg-[#EEEEEE] p-3 text-md w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
               value={vehicleCapacity}
               onChange={e => setvehicleCapacity(e.target.value)}
             />
           </div>
 
-          <button type="submit" className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'>Create Account</button>
+          <button
+            type="submit"
+            className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'
+            disabled={isLoading}
+          >Create Account</button>
         </form>
 
         <div>

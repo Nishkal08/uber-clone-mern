@@ -1,20 +1,22 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
-import { useLocation } from 'react-router-dom'
 import gsap from 'gsap'
-import { useState } from 'react'
-import { useRef } from 'react'
 import FinishRide from '../components/FinishRide'
-const CaptainRiding = () => {
+import LiveRouteTracking from '../components/LiveRouteTracking'
+import { MapContext } from '../context/MapContext'
+import { captainDataContext } from '../context/CaptainContext'
 
+const CaptainRiding = () => {
   const [finishRidePopUp, setFinishRidePopUp] = useState(false)
   const finishRideRef = useRef(null)
   const finishRideCloseRef = useRef(null)
   const location = useLocation()
   const ride = location.state?.ride
-  
-  
+  const pickup = location.state?.pickup
+  const drop = location.state?.drop
+  const { setPickupLocation, setDropLocation, setCaptainLocation } = useContext(MapContext)
+  const { captain } = useContext(captainDataContext);
   useGSAP(() => {
     if (finishRidePopUp) {
       gsap.to(finishRideRef.current, {
@@ -39,47 +41,55 @@ const CaptainRiding = () => {
     }
   }, [finishRidePopUp])
 
+  useEffect(() => {
+    setCaptainLocation(captain?.location || ride?.captain?.location);
+    setPickupLocation(pickup)
+    setDropLocation(drop)
+  }, [ride, pickup, drop, setPickupLocation, setDropLocation])
+
   return (
     <div>
       {/* UBER icons and all */}
-      <div className="fixed flex top-1 p-4 items-center w-screen justify-between">
-        <img className='w-15 top-5 left-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
-        <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl' >
-          <i class="ri-logout-box-line"></i>
+      <div className="fixed flex top-1 p-4 items-center w-screen justify-between z-20">
+        <img className='h-10' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber" />
+        <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl'>
+          <i className="ri-logout-box-line"></i>
         </Link>
       </div>
       {/* bg-img/Map */}
       <div className='h-screen'>
-        <img className='h-4/5 w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"></img>
+        <LiveRouteTracking className="absolute" />
         {/* bottom-card */}
-        <div className='h-1/5 w-full flex px-5 relative justify-between items-center'>
-          <div
-            className='text-center absolute top-0 left-0 right-0 text-gray-300 font-medium text-3xl cursor-pointer'
-          >
-            <i class="ri-arrow-up-wide-line"></i>
-          </div>
-          <div className='flex mt-3 justify-start gap-3 w-full'>
-            <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg"></img>
-            <div className='capitalize text-xl font-semibold'>
-              <p>{Math.round((ride?.distance)/1000,2)} Km</p>
-              <div className='text-sm leading-3 text-gray-400'>away</div>
+        <div className='fixed bottom-0 left-0 w-full z-10'>
+          <div className='w-full bg-white flex flex-col px-5 pt-4 pb-6 rounded-t-2xl shadow-2xl'>
+            {/* Arrow centered at the top */}
+            <div className='flex justify-center mb-2'>
+              <div className='text-gray-300 font-medium text-3xl cursor-pointer'>
+                <i className="ri-arrow-up-wide-line"></i>
+              </div>
+            </div>
+            {/* Info row */}
+            <div className='flex justify-between items-center'>
+              <div className='flex items-center gap-4'>
+                <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg" alt="User" />
+                <div>
+                  <div className='text-xl font-semibold capitalize'>{Math.round((ride?.distance) / 1000, 2)} Km</div>
+                  <div className='text-sm leading-3 text-gray-400'>Away</div>
+                </div>
+              </div>
+              {/* Button */}
+              <button
+                className='h-12 w-1/4 px-6 flex justify-center items-center bg-black text-white rounded-lg font-semibold'
+                onClick={() => setFinishRidePopUp(true)}
+              >
+                Complete Ride
+              </button>
             </div>
           </div>
-          <div className='w-full mt-3 '>
-            <button
-              className='w-full flex justify-center items-center bg-black text-white rounded-lg font-semibold  py-3'
-              onClick={() => {
-                setFinishRidePopUp(true)
-              }
-              }
-            >
-              Complete Ride
-            </button>
-          </div>
-
         </div>
         <div
-          ref={finishRideRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
+          ref={finishRideRef}
+          className='fixed w-full z-30 bottom-0 translate-y-full bg-white-100'
         >
           <FinishRide
             ride={ride}
@@ -88,9 +98,8 @@ const CaptainRiding = () => {
           />
         </div>
       </div>
-
     </div>
   )
 }
 
-export default CaptainRiding  
+export default CaptainRiding

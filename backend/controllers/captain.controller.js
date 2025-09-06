@@ -28,49 +28,52 @@ const registerCaptain = async (req, res, next) => {
         plate: vehicle.plate,
         color: vehicle.color,
         vehicleType: vehicle.vehicleType,
-        capacity: vehicle.capacity  
+        capacity: vehicle.capacity
     })
     if (!captain) {
         return res.status(400).json({ message: "Captain not created" });
-   }
-    console.log("Captain :", captain);
+    }
     const token = captain.generateAuthToken()
 
-    res.status(201).json({ captain: captain , token: token })
+    res.status(201).json({ captain: captain, token: token })
 }
 
-const loginCaptain = async(req,res) => {
+const loginCaptain = async (req, res) => {
 
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    
-    const { email , password } = req.body;
+
+    const { email, password } = req.body;
     const captain = await captainModel.findOne({ email }).select("+password")
-    if(!captain){
+    if (!captain) {
         return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.log("Captain :", captain.generateAuthToken());    
     const isMatch = await captain.comparePassword(password)
-    if(!isMatch){
+    if (!isMatch) {
         return res.status(400).json({ message: "Invalid email or password" });
     }
-    
-    const token = await captain.generateAuthToken();
-    res.cookie("token",token)
 
-    res.status(200).json({captain , token})
+    const token = await captain.generateAuthToken();
+    res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({ captain, token })
 }
-const logoutCaptain = async(req,res) => {
+const logoutCaptain = async (req, res) => {
     const token = req.token
     res.clearCookie("token");
     blacklistTokenModel.create({ token })
     res.status(200).json({ message: "Logout successful" });
 }
-const getCaptainProfile = async(req,res) => {
+const getCaptainProfile = async (req, res) => {
     return res.status(201).json(req.captain);
 }
+
 module.exports = {
     registerCaptain,
     loginCaptain,

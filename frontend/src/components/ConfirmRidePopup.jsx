@@ -3,11 +3,11 @@ import React, { use } from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-
+import { useContext } from 'react'
+import { MapContext } from '../context/MapContext'
 const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, setConfirmRidePopUpPanel }) => {
     const [OTP, setOTP] = useState("")
     const navigate = useNavigate()
-    console.log("token : ", localStorage.getItem("token"))
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
@@ -29,11 +29,13 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
                 setridePopUpPanel(false);
                 navigate("/captain-ride", {
                     state: {
-                        ride: res.data
+                        ride: res.data,
+                        pickup: ride.pickup,
+                        drop: ride.destination
                     }
                 });
             } else {
-                alert("Unexpected response from server");
+                alert("Unexpected response from server : " + res.status);
             }
         } catch (err) {
             console.error("Error starting ride:", err.response?.data || err.message);

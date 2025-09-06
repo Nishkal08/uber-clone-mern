@@ -16,7 +16,7 @@ export const CaptainHome = () => {
   const ConfirmRidePopUpRef = useRef(null)
   const ridePopUpCloseRef = useRef(null)
   const ConfirmRidePopUpCloseRef = useRef(null)
-  const { captain ,setCaptain } = useContext(captainDataContext)
+  const { captain, setCaptain } = useContext(captainDataContext)
   const { ride, setRide } = useContext(RideDataContext)
   const [ridePopUpPanel, setridePopUpPanel] = useState(false)
   const [ConfirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
@@ -82,7 +82,7 @@ export const CaptainHome = () => {
     const updateLocation = () => {
       if (navigator.geolocation) {
 
-        navigator.geolocation.getCurrentPosition((position) => {
+        navigator.geolocation.getCurrentPosition(async (position) => {
           console.log("position", position.coords)
           const { latitude, longitude } = position.coords;
           socket.emit("update-location-captain", {
@@ -92,10 +92,17 @@ export const CaptainHome = () => {
               lng: longitude
             }
           })
-          const newCaptain = axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`)
-          if(newCaptain)
-          {
-            setCaptain(newCaptain.data.captain)
+          try {
+            const newCaptain = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            })
+            if (newCaptain) {
+              setCaptain(newCaptain.data)
+            }
+          } catch (error) {
+            console.error("Error fetching captain data:", error);
           }
         })
       }
@@ -103,12 +110,11 @@ export const CaptainHome = () => {
         console.error("Geolocation is not supported by this browser.");
       }
     }
-    const interval = setInterval(updateLocation, 8000);
+    const interval = setInterval(updateLocation, 12000);
     updateLocation()
   }, [socket])
 
   socket.on("new-ride", (data) => {
-    console.log("Entered here----------------------")
     setRide(data)
     setridePopUpPanel(true)
   })
@@ -130,6 +136,28 @@ export const CaptainHome = () => {
     setConfirmRidePopUpPanel(true)
 
   }
+
+  useEffect(() => {
+    const fetchCaptainData = async () => {
+      if (!captain && localStorage.getItem('token')) {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+
+          if (response.data && response.data.captain) {
+            setCaptain(response.data.captain)
+          }
+        } catch (error) {
+          console.error("Error fetching captain data:", error)
+        }
+      }
+    }
+
+    fetchCaptainData()
+  }, [captain, setCaptain])
 
 
   return (
@@ -154,10 +182,10 @@ export const CaptainHome = () => {
           ref={ridePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
         >
           <RidePopUp ridePopUpCloseRef={ridePopUpCloseRef}
-          ride={ride}
-          confirmRide={confirmRide}
-          setridePopUpPanel={setridePopUpPanel}
-          setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
+            ride={ride}
+            confirmRide={confirmRide}
+            setridePopUpPanel={setridePopUpPanel}
+            setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
         </div>
         <div
           ref={ConfirmRidePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'

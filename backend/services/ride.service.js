@@ -92,8 +92,7 @@ const confirmRide = async ({ rideId, captainId }) => {
             throw new Error("Ride and otp are required")
         }
         try {
-            console.log("RIde id : ",rideId)
-            console.log("captain id : ",captainId)
+   
             let ride = await rideModel.findOne(
                 { 
                     _id: rideId ,

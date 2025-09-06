@@ -174,7 +174,6 @@ const Home = () => {
 
   const createRide = async (pickup, destination, vehicleType) => {
     try {
-      console.log("Creating ride with:", { pickup, destination, vehicleType });
       const res = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/ride/create-ride`,
         {
@@ -407,7 +406,7 @@ const Home = () => {
         alt="Uber Logo"
       />
       <div className='h-screen w-screen'>
-        <LiveTracking/>
+        <LiveTracking role="user"/>
       </div>
       <div className="flex flex-col justify-end h-screen absolute top-0 w-full">
         {/* Trip card */}
