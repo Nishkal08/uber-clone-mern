@@ -74,9 +74,21 @@ const getCaptainProfile = async (req, res) => {
     return res.status(201).json(req.captain);
 }
 
+const getCaptainLocation = async(req,res) => {
+    const { captainId } = req.params;
+    if(!captainId) return res.status(400).json({ message: "Captain ID is required" });
+
+    const location = await captainModel.findById(captainId).select("location -_id");
+    if(!location) return res.status(404).json({ message: "Captain not found" });
+
+ 
+    return res.status(200).json(location);
+}
+
 module.exports = {
     registerCaptain,
     loginCaptain,
     logoutCaptain,
-    getCaptainProfile
+    getCaptainProfile,
+    getCaptainLocation
 }

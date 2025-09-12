@@ -13,7 +13,6 @@ const getCoordinates = async(req,res) => {
         throw new Error("Address is required")
     }
     try{
-        console.log(typeof getAddressCoordinates)
         const coordinates = await getAddressCoordinates(address)
         res.status(200).json(coordinates)
     }

@@ -44,30 +44,43 @@ function App() {
           </CaptainProtectWrapper>
         } />
       </Routes>
-      
-      <Toaster 
+
+      <Toaster
         position="top-center"
         toastOptions={{
-          duration: 4000,
+          duration: 2000,
           style: {
-            background: '#ffffff',
-            color: '#000000',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            fontSize: '14px',
+            fontWeight: 500,
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
           },
           success: {
             style: {
-              background: '#ffffff',
-              color: '#10b981',
+              background: '#ecfdf5', // light green
+              color: '#065f46',      // dark green text
+              border: '1px solid #a7f3d0',
+            },
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#ecfdf5',
             },
           },
           error: {
             style: {
-              background: '#ffffff',
-              color: '#ef4444',
+              background: '#fef2f2', // light red
+              color: '#991b1b',      // dark red text
+              border: '1px solid #fecaca',
+            },
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fef2f2',
             },
           },
         }}
       />
+
     </>
   )
 }

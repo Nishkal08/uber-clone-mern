@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useLocation , useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { MapContext } from '../context/MapContext'
-import LiveTracking from '../components/LiveTracking'
+import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios'
 import LiveRouteTracking from '../components/LiveRouteTracking'
 
 const Riding = () => {
@@ -12,10 +13,16 @@ const Riding = () => {
     const navigate = useNavigate()
     const ride = location.state?.ride
     const { socket } = useContext(SocketContext)
-    const { setPickupLocation, setDropLocation , setCaptainLocation} = useContext(MapContext)
-    
-    console.warn("ride : ",ride);
-    
+    const { setPickupLocation, setDropLocation, setCaptainLocation } = useContext(MapContext)
+
+
+    const getCaptainLocation = async () => {
+        const captainLocation = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/location/${ride.captain._id}`)
+        if (captainLocation.data) {
+            console.log("Captain location fetched:", captainLocation.data);            
+            setCaptainLocation(captainLocation.data)
+        }
+    }
     // Set pickup and drop locations from ride data
     useEffect(() => {
         if (ride) {
@@ -27,17 +34,24 @@ const Riding = () => {
             });
             // Set captain location if available
             setCaptainLocation(ride.captain?.location);
+            console.warn("Captain Location:", ride.captain?.location);
             if (ride.pickup) {
                 setPickupLocation(ride.pickup);
-            } 
+            }
             // Set drop location if available
             if (ride.drop) {
                 setDropLocation(ride.drop);
             }
+            const intervalId = setInterval(() => {
+                getCaptainLocation();
+            }, 13000);
+
+            // Cleanup interval on unmount or ride change
+            return () => clearInterval(intervalId);
         }
     }, [ride, setPickupLocation, setDropLocation]);
-    
-    socket.on("ride-ended",() => {
+
+    socket.on("ride-ended", () => {
         navigate("/home")
     })
     return (

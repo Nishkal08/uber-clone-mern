@@ -8,6 +8,7 @@ import { VehiclePanel } from '../components/VehiclePanel';
 import { ConfirmRide } from '../components/ConfirmRide';
 import { LookingForDriver } from '../components/LookingForDriver';
 import { WaitingForDriver } from '../components/WaitingForDriver';
+
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { userDataContext } from '../context/UserContext';
 import { SocketContext } from '../context/SocketContext';
@@ -397,6 +398,7 @@ const Home = () => {
     }
   }, [socket, navigate, setRide, setVehicleFound, setWaitingForDriver])
 
+  
   return (
     <div className='relative h-screen'>
       <img 

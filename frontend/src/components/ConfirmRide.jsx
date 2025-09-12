@@ -3,10 +3,6 @@ import { RideDataContext } from '../context/RideContext'
 import CardLoader from './CardLoader'
 import { toast, ToastContainer, Bounce } from 'react-toastify'
 
-
-
-
-
 export const ConfirmRide = ({
     pickup,
     createRide,

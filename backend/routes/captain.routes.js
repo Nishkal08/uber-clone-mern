@@ -22,7 +22,7 @@ router.post("/login",[
 ],
     captainController.loginCaptain
 )
-
+router.get("/location/:captainId",captainController.getCaptainLocation)
 
 router.get("/profile",authCaptain,captainController.getCaptainProfile)
 router.post("/logout",authCaptain,captainController.logoutCaptain)

@@ -81,7 +81,6 @@ export const CaptainHome = () => {
 
     const updateLocation = () => {
       if (navigator.geolocation) {
-
         navigator.geolocation.getCurrentPosition(async (position) => {
           console.log("position", position.coords)
           const { latitude, longitude } = position.coords;
@@ -110,7 +109,7 @@ export const CaptainHome = () => {
         console.error("Geolocation is not supported by this browser.");
       }
     }
-    const interval = setInterval(updateLocation, 12000);
+    setInterval(updateLocation, 1000*60);
     updateLocation()
   }, [socket])
 

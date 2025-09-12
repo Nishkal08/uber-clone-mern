@@ -224,16 +224,23 @@ const LiveRouteTracking = () => {
     }
   }, [captain?.location, setCaptainLocation]);
   
-  const getCoordinates = async (address) => {
+  const getCoords = async (address) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/map/get-coords`, {
-        params: {
-          address: pickupLocation
+
+      if(typeof address == "string" && address.trim() !== ""){
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/map/get-coords`, {
+          params: {
+            address: pickupLocation
+          }
+        });
+        
+        if (response.data) {
+          return response.data;
         }
-      });
-      
-      if (response.data) {
-        return response.data;
+      }
+      else
+      {
+        return address;
       }
     } catch (error) {
       console.error("Error fetching coordinates:", error);
@@ -243,8 +250,8 @@ const LiveRouteTracking = () => {
   useEffect(() => {
     try{
       const fetchCoordinates = async () => {
-        const coords = await getCoordinates(pickupLocation);
-        console.log("Fetched coordinates:", coords);
+        if (!pickupLocation) return;
+        const coords = await getCoords(pickupLocation);
         if (coords) {
           setPickupLocation(coords);
         }
@@ -253,7 +260,7 @@ const LiveRouteTracking = () => {
     } catch (error) {
       console.error("Error fetching coordinates:", error);
     }
-  }, [pickupLocation, setPickupLocation]);
+  }, [pickupLocation,setPickupLocation]);
 
 
   useEffect(() => {
