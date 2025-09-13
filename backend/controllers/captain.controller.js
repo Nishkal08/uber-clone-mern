@@ -2,7 +2,7 @@ const captainModel = require('../models/captain.model');
 const captainService = require('../services/captain.service');
 const { validationResult } = require('express-validator');
 const blacklistTokenModel = require('../models/blacklistToken.model');
-
+const { OAuth2Client } = require('google-auth-library');
 
 const registerCaptain = async (req, res, next) => {
 
@@ -85,10 +85,54 @@ const getCaptainLocation = async(req,res) => {
     return res.status(200).json(location);
 }
 
+const googleLogin = async (req, res) => {
+  try {
+    //idToken =  jwt token provided by google contaning user info (email,name etc)
+    console.warn("Google Login called");
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({ message: "No ID token provided" });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    console.log("Google ticket:", ticket);
+
+    const payload = ticket.getPayload();
+    const { email, given_name, family_name, picture, email_verified } = payload;
+
+    if (!email_verified) {
+      return res.status(401).json({ message: "Google email not verified" });
+    }
+    let captain = await captainModel.findOne({ email });
+
+    if (!captain) {
+      return res.status(404).json({
+        message: "Captain not found. Please sign up first.",
+        email,
+        firstName: given_name,
+        lastName: family_name,
+        picture,
+      });
+    }
+    const token = await captain.generateAuthToken();
+    res.status(200).json({ token: token, captain });
+  } catch (err) {
+    console.error("Google login error:", err);
+    res.status(500).json({ message: "Google login failed" });
+  }
+}
+
+
 module.exports = {
     registerCaptain,
     loginCaptain,
     logoutCaptain,
     getCaptainProfile,
-    getCaptainLocation
+    getCaptainLocation,
+    googleLogin
 }

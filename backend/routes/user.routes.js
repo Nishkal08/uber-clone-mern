@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser , getUserProfile , logoutUser, loginUser} = require("../controllers/user.controller");
+const { registerUser , getUserProfile ,googleLogin, logoutUser, loginUser} = require("../controllers/user.controller");
 const { body } = require("express-validator")
 const router = express.Router();
 const { authUser } = require("../middlewares/auth.middleware");
@@ -20,5 +20,6 @@ router.post("/login",[
 
 router.get("/profile",authUser,getUserProfile)
 router.post("/logout",authUser,logoutUser)
+router.post("/google-login",googleLogin)
 
 module.exports = router

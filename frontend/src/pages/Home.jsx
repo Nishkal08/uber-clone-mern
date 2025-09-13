@@ -9,13 +9,15 @@ import { ConfirmRide } from '../components/ConfirmRide';
 import { LookingForDriver } from '../components/LookingForDriver';
 import { WaitingForDriver } from '../components/WaitingForDriver';
 
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+// import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { toast } from "react-hot-toast"
 import { userDataContext } from '../context/UserContext';
 import { SocketContext } from '../context/SocketContext';
 import { RideDataContext } from '../context/RideContext';
 import Loader2 from '../components/Loader2';
 import { useNavigate } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
+import LogoutButton from '../components/LogoutButton';
 
 const Home = () => {
   const [panelOpen, setPanelOpen] = useState(false)
@@ -64,7 +66,7 @@ const Home = () => {
   const handlePickupChange = async (e) => {
     const value = e.target.value;
     setPickup(value);
-    
+
     // Only fetch suggestions if there's text
     if (value.trim().length > 2) {
       try {
@@ -92,7 +94,7 @@ const Home = () => {
   const handleDestinationChange = async (e) => {
     const value = e.target.value;
     setDestination(value);
-    
+
     // Only fetch suggestions if there's text
     if (value.trim().length > 2) {
       try {
@@ -120,17 +122,7 @@ const Home = () => {
   const handleButtonClick = async (e) => {
     e.preventDefault()
     if (!pickup || !destination) {
-      toast.error('Pickup and Destination locations are required', {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      toast.error('Pickup and Destination locations are required');
       return
     }
     try {
@@ -161,12 +153,7 @@ const Home = () => {
       setVehiclePanel(true)
     } catch (error) {
       console.log("Error fetching fares and distance/time", error);
-      toast.error('Error fetching ride information. Please try again.', {
-        position: "top-right",
-        autoClose: 4000,
-        theme: "light",
-        transition: Bounce,
-      });
+      toast.error('Error fetching ride information. Please try again.');
     }
     finally {
       setLoading(false)
@@ -188,7 +175,7 @@ const Home = () => {
           }
         }
       );
-      
+
       console.log("Ride created successfully:", res.data);
       setRide(res.data.ride); // Store the ride data
       setConfirmRide(false);
@@ -196,12 +183,7 @@ const Home = () => {
       return res.data;
     } catch (err) {
       console.log("Error creating ride", err.response?.data || err.message)
-      toast.error('Error creating ride. Please try again.', {
-        position: "top-right",
-        autoClose: 4000,
-        theme: "light",
-        transition: Bounce,
-      });
+      toast.error('Error creating ride. Please try again.');
       throw err;
     }
   }
@@ -349,39 +331,24 @@ const Home = () => {
         setVehicleFound(false);
         setRide(rideData);
         setWaitingForDriver(true);
-        
-        toast.success('Driver found! Ride confirmed.', {
-          position: "top-right",
-          autoClose: 4000,
-          theme: "light",
-          transition: Bounce,
-        });
+
+        toast.success('Driver found! Ride confirmed.');
       };
 
       const handleRideStarted = (rideData) => {
         console.log("Ride started:", rideData);
         setWaitingForDriver(false);
         navigate('/riding', { state: { ride: rideData } });
-        
-        toast.success('Ride started! Have a safe journey.', {
-          position: "top-right",
-          autoClose: 4000,
-          theme: "light",
-          transition: Bounce,
-        });
+
+        toast.success('Ride started! Have a safe journey.');
       };
 
       const handleRideEnded = (rideData) => {
         console.log("Ride ended:", rideData);
         // Handle ride end logic
         navigate('/home');
-        
-        toast.success('Ride completed successfully!', {
-          position: "top-right",
-          autoClose: 4000,
-          theme: "light",
-          transition: Bounce,
-        });
+
+        toast.success('Ride completed successfully!');
       };
 
       // Add event listeners
@@ -398,20 +365,52 @@ const Home = () => {
     }
   }, [socket, navigate, setRide, setVehicleFound, setWaitingForDriver])
 
-  
+
+
+  const handleLogout = async () => {
+    try {
+      // toast.loading("logging out...")
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      )
+
+      await socket.disconnect();
+      localStorage.removeItem("token")
+      toast.success('Logged out successfully')
+      navigate("/user-login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  }
+
   return (
     <div className='relative h-screen'>
-      <img 
-        className='w-15 absolute top-5 left-5 cursor-pointer' 
-        onClick={() => navigate("/home")} 
+      <img
+        className='w-18 absolute top-5 left-5 cursor-pointer z-1'
+        onClick={() => navigate("/home")}
         src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
         alt="Uber Logo"
       />
-      <div className='h-screen w-screen'>
-        <LiveTracking role="user"/>
+
+      {/* Align Logout button to top right */}
+      <div className="absolute top-5 right-5 z-1">
+        <LogoutButton onClick={handleLogout} />
       </div>
-      <div className="flex flex-col justify-end h-screen absolute top-0 w-full">
-        {/* Trip card */}
+
+      <div className='h-screen w-screen'>
+        <LiveTracking role="user" />
+      </div>
+
+      {/* Trip card */}
+
+      <div className="flex flex-col justify-end h-screen absolute top-0 w-full z-2">
         <div ref={findMyTrip} className='bg-white min-h-fit p-5 relative' >
           <h5
             className='absolute top-3 right-3 cursor-pointer'
@@ -422,7 +421,7 @@ const Home = () => {
           </h5>
           <h4 className="text-3xl font-semibold">Find a trip</h4>
           <form onSubmit={SubmitHandler}>
-            <input 
+            <input
               type="text"
               onClick={() => {
                 setPanelOpen(true)
@@ -435,7 +434,7 @@ const Home = () => {
               placeholder='Add a pickup location'
             />
             <div className='line h-17 w-1 bg-black absolute font-bold left-11 top-25 rounded-full'></div>
-            <input 
+            <input
               type="text"
               onClick={() => {
                 setActiveField("destination")
@@ -447,9 +446,9 @@ const Home = () => {
               placeholder="Enter your destination"
             />
           </form>
-          <button 
-            type="submit" 
-            className='rounded-lg p-3 mt-4 w-full text-lg font-semibold bg-black flex justify-center items-center text-white disabled:opacity-50' 
+          <button
+            type="submit"
+            className='rounded-lg p-3 mt-4 w-full text-lg font-semibold bg-black flex justify-center items-center text-white disabled:opacity-50'
             onClick={handleButtonClick}
             disabled={loading}
           >
@@ -513,7 +512,7 @@ const Home = () => {
         />
       </div>
 
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -527,7 +526,7 @@ const Home = () => {
         transition={Bounce}
         toastClassName="!w-[350px] !min-w-[250px] !max-w-[90vw]"
         bodyClassName="!w-full !break-words"
-      />
+      /> */}
     </div>
   )
 }

@@ -4,7 +4,10 @@ import CaptainDetails from '../components/CaptainDetails'
 import RidePopUp from '../components/RidePopUp'
 import { useGSAP } from '@gsap/react'
 import { captainDataContext } from '../context/CaptainContext'
+import LogoutButton from '../components/LogoutButton'
 import gsap from 'gsap'
+import {toast} from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 import ConfirmRidePopup from '../components/ConfirmRidePopup'
 import { useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
@@ -109,7 +112,7 @@ export const CaptainHome = () => {
         console.error("Geolocation is not supported by this browser.");
       }
     }
-    setInterval(updateLocation, 1000*60);
+    setInterval(updateLocation, 1000 * 60);
     updateLocation()
   }, [socket])
 
@@ -158,17 +161,41 @@ export const CaptainHome = () => {
     fetchCaptainData()
   }, [captain, setCaptain])
 
+  const navigate = useNavigate()
+  const handleLogout = async () => {
+      try {
+        // toast.loading("logging out...")
+        
+        const res = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/captains/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          }
+        )
+  
+        await socket.disconnect();
+        localStorage.removeItem("token")
+        toast.success('Logged out successfully')
+        navigate("/captain-login");
+      } catch (error) {
+        console.error("Error logging out:", error);
+      }
+    }
 
   return (
     <div>
-      <div>
+      {/* <div>
         {captain?.socketId}
-      </div>
-      <div className="fixed flex top-1 p-4 items-center w-screen justify-between">
-        <img className='w-15 top-5 left-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
-        <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl' >
-          <i class="ri-logout-box-line"></i>
-        </Link>
+      </div> */}
+      <div className="fixed flex top-1 p-4 items-center w-screen justify-between z-100">
+        <img className='w-15 top-5 left-5 ' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
+        <div className="absolute top-5 right-5 z-10">
+          <LogoutButton onClick={handleLogout} />
+        </div>
+
       </div>
       <div className='h-screen w-screen'>
         <div className='h-3/5'>

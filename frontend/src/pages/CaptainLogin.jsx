@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
+
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { captainDataContext } from '../context/CaptainContext'
@@ -8,6 +10,7 @@ import toast from 'react-hot-toast';
 const CaptainLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { setCaptain } = useContext(captainDataContext)
   const submitHandler = async (e) => {
@@ -42,6 +45,50 @@ const CaptainLogin = () => {
     setEmail('')
     setPassword('')
   }
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+
+    const idToken = credentialResponse?.credential //gives idToken
+    if (!idToken) {
+      toast.error('Google did not return a credential')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      await toast.promise(
+        axios.post(`${import.meta.env.VITE_BASE_URL}/captains/google-login`,
+          {
+            idToken,
+          }
+        ),
+        {
+          loading: "logging in with Google...",
+          success: (res) => {
+            if (res.status === 200) {
+              localStorage.setItem("token", res.data.token);
+              setCaptain(res.data.captain);
+              navigate("/captain-home");
+              return "Google login successfull!";
+            }
+          },
+          error: (err) => {
+
+            if (err.response?.status === 404) {
+              navigate("/captain-signup");
+              return "Captain not found. Redirecting to signup...";
+            }
+
+            return "Google login failed";
+          },
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+
   return (
     <div className='h-screen px-7 py-5 flex flex-col gap-7'>
       <img className="w-19" src="https://www.svgrepo.com/show/505031/uber-driver.svg"></img>
@@ -71,7 +118,34 @@ const CaptainLogin = () => {
           <div className="mb-7"></div>
         )}
 
-        <button type="submit" className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'>Login</button>
+        <button type="submit" className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'>
+          {isLoading? 'Logging in...': 'Login'}
+        </button>
+        
+        <div className="flex items-center my-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-2 text-gray-500">or</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
+        <div className="flex flex-col items-center w-full gap-4 mt-4">
+          <div className="w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error("Google sign in failed")}
+              size="large"
+              shape="square"
+              width="100%"
+            />
+          </div>
+          <Link
+            to='/captain-home'
+            className='w-full max-w-xs py-2 px-4 border-2 border-black rounded-lg bg-white hover:bg-gray-100 transition-colors duration-200 font-semibold text-black text-center'
+          >
+            Sign in as Captain
+          </Link>
+        </div>
+
       </form>
 
       <div>

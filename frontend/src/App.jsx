@@ -48,39 +48,38 @@ function App() {
       <Toaster
         position="top-center"
         toastOptions={{
-          duration: 2000,
+          duration: 4000,
           style: {
             borderRadius: '8px',
             padding: '12px 16px',
             fontSize: '14px',
             fontWeight: 500,
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
           },
           success: {
             style: {
-              background: '#ecfdf5', // light green
-              color: '#065f46',      // dark green text
-              border: '1px solid #a7f3d0',
+              background: '#f9fafb',     // very light gray with hint of green
+              color: '#374151',          // dark gray text
+              border: '1px solid #d1fae5', // subtle green border
             },
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#ecfdf5',
+              primary: '#10b981',        // subtle green icon
+              secondary: '#f9fafb',
             },
           },
           error: {
             style: {
-              background: '#fef2f2', // light red
-              color: '#991b1b',      // dark red text
-              border: '1px solid #fecaca',
+              background: '#f9fafb',     // very light gray with hint of red
+              color: '#374151',          // dark gray text
+              border: '1px solid #fecaca', // subtle red border
             },
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fef2f2',
+              primary: '#ef4444',        // subtle red icon
+              secondary: '#f9fafb',
             },
           },
         }}
       />
-
     </>
   )
 }

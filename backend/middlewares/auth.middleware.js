@@ -7,6 +7,7 @@ const authUser = async (req,res,next) => {
     // checks if user is logged in (authenticated) or not using token
 
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    console.warn("Auth middleware token:", token);
     if(!token){
         return res.status(401).json({message: "Authentication token is missing"});
     }

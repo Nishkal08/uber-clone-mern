@@ -13,7 +13,7 @@ const UserSignUp = () => {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [passwordError, setPasswordError] = useState('')
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const { user, setUser } = useContext(userDataContext)
     const base_url = import.meta.env.VITE_BASE_URL
     const navigate = useNavigate()

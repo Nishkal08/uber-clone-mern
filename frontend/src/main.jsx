@@ -8,6 +8,8 @@ import UserContext from './context/UserContext.jsx'
 import RideContext from './context/RideContext.jsx'
 import SocketProvider from './context/SocketContext.jsx'
 import { MapProvider } from './context/MapContext.jsx'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <CaptainContext>
@@ -15,7 +17,9 @@ createRoot(document.getElementById('root')).render(
         <RideContext>
           <SocketProvider>
             <MapProvider>
-            <App />
+              <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                <App />
+              </GoogleOAuthProvider>
             </MapProvider>
           </SocketProvider>
         </RideContext>
