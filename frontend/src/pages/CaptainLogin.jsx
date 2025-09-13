@@ -90,7 +90,7 @@ const CaptainLogin = () => {
 
 
   return (
-    <div className='h-screen px-7 py-5 flex flex-col gap-7'>
+    <div className='h-screen px-7 py-5 flex flex-col gap-4'>
       <img className="w-19" src="https://www.svgrepo.com/show/505031/uber-driver.svg"></img>
       <form onSubmit={submitHandler}>
         <h3 className='text-lg font-medium mb-2'>What's our captain's email?</h3>
@@ -119,9 +119,10 @@ const CaptainLogin = () => {
         )}
 
         <button type="submit" className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'>
-          {isLoading? 'Logging in...': 'Login'}
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
-        
+
+        {/* or --- separator */}
         <div className="flex items-center my-4">
           <hr className="flex-grow border-gray-300" />
           <span className="mx-2 text-gray-500">or</span>
@@ -139,26 +140,20 @@ const CaptainLogin = () => {
             />
           </div>
           <Link
-            to='/captain-home'
+            to='/user-login'
             className='w-full max-w-xs py-2 px-4 border-2 border-black rounded-lg bg-white hover:bg-gray-100 transition-colors duration-200 font-semibold text-black text-center'
           >
-            Sign in as Captain
+            Sign in as User
           </Link>
         </div>
 
       </form>
-
       <div>
         <p className='text-center'>
           Join a fleet? <Link to='/captain-signup' className='text-blue-600'>Register as captain</Link>
         </p>
       </div>
-      <div className='absolute bottom-0 left-0 right-0 p-7'>
-        <Link
-          to='/user-login'
-          className='bg-white  flex items-center justify-center text-black ring-2 font-semibold mb-3 rounded-lg p-4 w-full text-lg placeholder:text-base'
-        >Sign in as User</Link>
-      </div>
+
     </div>
   )
 }
