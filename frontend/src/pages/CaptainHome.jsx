@@ -6,7 +6,7 @@ import { useGSAP } from '@gsap/react'
 import { captainDataContext } from '../context/CaptainContext'
 import LogoutButton from '../components/LogoutButton'
 import gsap from 'gsap'
-import {toast} from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import ConfirmRidePopup from '../components/ConfirmRidePopup'
 import { useContext } from 'react'
@@ -68,24 +68,22 @@ export const CaptainHome = () => {
         gsap.to(ConfirmRidePopUpCloseRef.current, {
           opacity: 0
         })
-    }
+    } 
   }, [ConfirmRidePopUpPanel])
 
   const { socket } = useContext(SocketContext)
-
+ 
   useEffect(() => {
-    console.warn("useEffect called")
-    console.warn(captain)
-    socket.emit("join", {
-      userType: "captain",
-      userId: captain._id
-    })
-
-
+    
+    if (captain?._id) {
+      socket.emit("join", {
+        userId: captain._id,
+        userType: "captain"
+      });
+    }
     const updateLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (position) => {
-          console.log("position", position.coords)
           const { latitude, longitude } = position.coords;
           socket.emit("update-location-captain", {
             userId: captain._id,
@@ -112,9 +110,9 @@ export const CaptainHome = () => {
         console.error("Geolocation is not supported by this browser.");
       }
     }
-    setInterval(updateLocation, 1000 * 60);
-    updateLocation()
-  }, [socket])
+    setInterval(updateLocation, 1000 * 60 * 2); // Call every 2 minutes
+    updateLocation();
+  }, [socket,captain._id])
 
   socket.on("new-ride", (data) => {
     setRide(data)
@@ -163,33 +161,33 @@ export const CaptainHome = () => {
 
   const navigate = useNavigate()
   const handleLogout = async () => {
-      try {
-        // toast.loading("logging out...")
-        
-        const res = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/captains/logout`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
+    try {
+      // toast.loading("logging out...")
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
           }
-        )
-  
-        await socket.disconnect();
-        localStorage.removeItem("token")
-        toast.success('Logged out successfully')
-        navigate("/captain-login");
-      } catch (error) {
-        console.error("Error logging out:", error);
-      }
+        }
+      )
+
+      await socket.disconnect();
+      localStorage.removeItem("token")
+      toast.success('Logged out successfully')
+      navigate("/captain-login");
+    } catch (error) {
+      console.error("Error logging out:", error);
     }
+  }
 
   return (
     <div>
-      {/* <div>
+      <div>
         {captain?.socketId}
-      </div> */}
+      </div>
       <div className="fixed flex top-1 p-4 items-center w-screen justify-between z-100">
         <img className='w-15 top-5 left-5 ' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
         <div className="absolute top-5 right-5 z-10">

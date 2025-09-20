@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { RideDataContext } from '../context/RideContext'
 import CardLoader from './CardLoader'
-import { toast, ToastContainer, Bounce } from 'react-toastify'
+import { toast } from 'react-hot-toast'
 
 export const ConfirmRide = ({
     pickup,
@@ -17,27 +17,18 @@ export const ConfirmRide = ({
     const handleConfirmRide = async () => {
         try {
             const ride = await createRide(pickup, destination, vehicleType)
+            console.log("Ride created:", ride)
             setRide({ ride })
+            if (ride) {
+                toast.success('Ride confirmed');
+            }
         } catch (err) {
+            if (err?.response?.status === 404) {
+                toast.error("No captains available nearby");
+                return;
+            }
             console.log("Error creating ride", err)
         }
-        if (ride) {
-            toast.success('Ride confirmed', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-                toastClassName: "w-[50vw] max-w-[400px]",
-                bodyClassName: "text-sm break-words w-full"
-            });
-
-        }
-
     }
 
     return (
@@ -95,19 +86,6 @@ export const ConfirmRide = ({
                     </button>
                 </div>
             </div>
-            <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-                transition={Bounce}
-            />
         </div>
     )
 }

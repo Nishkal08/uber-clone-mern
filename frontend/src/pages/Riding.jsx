@@ -18,23 +18,17 @@ const Riding = () => {
 
     const getCaptainLocation = async () => {
         const captainLocation = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/location/${ride.captain._id}`)
+        // console.warn("-------------Fetched captain location:", captainLocation.data);
         if (captainLocation.data) {
-            console.log("Captain location fetched:", captainLocation.data);            
-            setCaptainLocation(captainLocation.data)
+            setCaptainLocation(captainLocation.data.location)
         }
     }
     // Set pickup and drop locations from ride data
     useEffect(() => {
         if (ride) {
-            console.log("Setting locations from ride data:", {
-                pickup: ride.pickup,
-                destination: ride.destination,
-                pickupLocation: ride.pickupLocation,
-                dropLocation: ride.dropLocation
-            });
+
             // Set captain location if available
             setCaptainLocation(ride.captain?.location);
-            console.warn("Captain Location:", ride.captain?.location);
             if (ride.pickup) {
                 setPickupLocation(ride.pickup);
             }
@@ -43,8 +37,9 @@ const Riding = () => {
                 setDropLocation(ride.drop);
             }
             const intervalId = setInterval(() => {
+                console.warn("Fetching captain location...", getCaptainLocation());
                 getCaptainLocation();
-            }, 13000);
+            }, 1000 * 60 *2); // Fetch captain location every 2 minutes
 
             // Cleanup interval on unmount or ride change
             return () => clearInterval(intervalId);
@@ -94,6 +89,7 @@ const Riding = () => {
                         </div>
                         <div className='w-full px-3 mt-6'>
                             <button
+                                // onClick={}
                                 className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-4 py-3'
                             >
                                 Make A Payment

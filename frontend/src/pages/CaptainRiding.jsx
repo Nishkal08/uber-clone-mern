@@ -42,10 +42,11 @@ const CaptainRiding = () => {
   }, [finishRidePopUp])
 
   useEffect(() => {
-    setCaptainLocation(captain?.location || ride?.captain?.location);
+    setCaptainLocation(captain?.location);
+
     setPickupLocation(pickup)
     setDropLocation(drop)
-  }, [ride, pickup, drop, setPickupLocation, setDropLocation])
+  }, [ride, setPickupLocation, setDropLocation])
 
   return (
     <div>

@@ -45,9 +45,14 @@ const createRide = async(req,res) => {
         }   
         const pickupCoords = await mapService.getAddressCoordinates(pickup)
         console.log("pickupCoords : ",pickupCoords)
-        const captains = await mapService.getCaptainsInRadius(pickupCoords.lat,pickupCoords.lng,10) // 10 km radius
+        const captains = await mapService.getCaptainsInRadius(pickupCoords.lat,pickupCoords.lng,200) // 10 km radius
+        if(captains.length == 0 || !captains)
+        {
+            return res.status(404).json({message:"No captains available nearby"})
+        }
         const ride = await rideService.createRide({user:req.user._id, pickup, destination, vehicleType})
         // ride.otp=""
+        
         //Vehicle based captains filteration
         const rideWithUser = await rideModel.findOne({_id:ride._id}).populate("user")
         const filteredCaptains = captains.filter((captain) => {
@@ -56,11 +61,13 @@ const createRide = async(req,res) => {
             }
             return ride.vehicleType == captain.vehicle.vehicleType
         })
-   
-     
-        
-        captains.map((captain) => {
-            console.log("captain : ",captain)
+
+        if(filteredCaptains.length == 0)
+        {
+            return res.status(404).json({message:"No captains available for selected vehicle type"})
+        }
+        filteredCaptains.map((captain) => {
+            console.log("sending to : ",captain.name)
             sendMessageToUser(captain.socketId,{
                 event:"new-ride",
                 data:rideWithUser
@@ -109,7 +116,6 @@ const confirmRide = async(req,res) => {
 }
 
 const startRide = async (req,res) => {
-    console.warn("startRide------------");
     const errors = validationResult(req)
     if(!errors.isEmpty())
     {
@@ -118,10 +124,11 @@ const startRide = async (req,res) => {
     const { rideId, otp } = req.body
     const ride = await rideService.startRide({rideId,otp,captainId:req.captain._id}) 
     console.log("Start control : ",ride)
-    if(!ride)
+    if(!ride || ride.otpMatch === false)
     {
-        return res.status(400).json({message:"Ride not found"});
+        return res.status(404).json({message:"Ride not found"});
     }
+ 
     sendMessageToUser(
         ride.user.socketId,
         {

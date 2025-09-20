@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
+import toast from 'react-hot-toast'
 import { MapContext } from '../context/MapContext'
 const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, setConfirmRidePopUpPanel }) => {
     const [OTP, setOTP] = useState("")
@@ -23,7 +24,6 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
                     }
                 }
             );
-            console.warn("status : ", res.status, res.data);
             if (res.status === 200 || res.status === 201) {
                 setConfirmRidePopUpPanel(false);
                 setridePopUpPanel(false);
@@ -35,11 +35,16 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
                     }
                 });
             } else {
-                alert("Unexpected response from server : " + res.status);
+                console.warn("Unexpected response status:", res);
+                console.log("Otp error response:", res.data);
             }
         } catch (err) {
-            console.error("Error starting ride:", err.response?.data || err.message);
-            // alert("Error: " + (err.response?.data?.message || err.message));
+            if(err?.response?.status == 404 || err?.response?.status == 400)
+            {
+                toast.error("Invalid OTP, please try again.");
+            }
+
+            console.error("Error starting ride:", err);
         }
     };
 

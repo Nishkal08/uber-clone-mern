@@ -87,47 +87,45 @@ const confirmRide = async ({ rideId, captainId }) => {
     }
 }
 
-    const startRide = async ({ rideId, otp , captainId }) => {
-        if (!rideId || !otp) {
-            throw new Error("Ride and otp are required")
-        }
-        try {
-   
-            let ride = await rideModel.findOne(
-                { 
-                    _id: rideId ,
-                    captain: captainId
-                }
-            ).populate("user").populate("captain").select("+otp")
-            if (!ride) {
-                throw new Error("Ride not found")
-            }
-            if (ride.otp !== otp) {
-                throw new Error("Invalid otp")
-            }
-            ride = await rideModel.findOneAndUpdate(
-                {
-                    _id: ride._id
-                },
-                {
-                    status: "ongoing"
-                },
-                {
-                    new: true
-                }
-            ).populate("user").populate("captain").select("+otp")
-            return ride
-        }
-        catch (err) {
-            throw new Error("Error occured during ride start: " + err.message);
-        }
-
+const startRide = async ({ rideId, otp, captainId }) => {
+    if (!rideId || !otp) {
+        throw new Error("Ride and otp are required")
     }
-const endRide = async ({ rideId , captainId }) =>
-{
-    if(!rideId)
-    {
-    throw new Error("Ride id is required")
+    try {
+
+        let ride = await rideModel.findOne(
+            {
+                _id: rideId,
+                captain: captainId
+            }
+        ).populate("user").populate("captain").select("+otp")
+        if (!ride) {
+            throw new Error("Ride not found")
+        }
+        if (ride.otp !== otp) {
+            return { otpMatch: false }
+        }
+        ride = await rideModel.findOneAndUpdate(
+            {
+                _id: ride._id
+            },
+            {
+                status: "ongoing"
+            },
+            {
+                new: true
+            }
+        ).populate("user").populate("captain").select("+otp")
+        return ride
+    }
+    catch (err) {
+        throw new Error("Error occured during ride start: " + err.message);
+    }
+
+}
+const endRide = async ({ rideId, captainId }) => {
+    if (!rideId) {
+        throw new Error("Ride id is required")
     }
     let ride = await rideModel.findOne(
         {
@@ -135,11 +133,10 @@ const endRide = async ({ rideId , captainId }) =>
             captain: captainId
         }
     )
-    if(!ride)
-    {
+    if (!ride) {
         throw new Error("Ride not found")
     }
-     ride = await rideModel.findOneAndUpdate(
+    ride = await rideModel.findOneAndUpdate(
         {
             _id: ride._id
         },

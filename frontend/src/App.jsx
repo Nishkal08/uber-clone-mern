@@ -58,23 +58,23 @@ function App() {
           },
           success: {
             style: {
-              background: '#f9fafb',     // very light gray with hint of green
-              color: '#374151',          // dark gray text
-              border: '1px solid #d1fae5', // subtle green border
+              background: '#f9fafb',     
+              color: '#374151',          
+              border: '1px solid #d1fae5', 
             },
             iconTheme: {
-              primary: '#10b981',        // subtle green icon
+              primary: '#10b981',        
               secondary: '#f9fafb',
             },
           },
           error: {
             style: {
-              background: '#f9fafb',     // very light gray with hint of red
-              color: '#374151',          // dark gray text
-              border: '1px solid #fecaca', // subtle red border
+              background: '#f9fafb',    
+              color: '#374151',          
+              border: '1px solid #fecaca', 
             },
             iconTheme: {
-              primary: '#ef4444',        // subtle red icon
+              primary: '#ef4444',        
               secondary: '#f9fafb',
             },
           },

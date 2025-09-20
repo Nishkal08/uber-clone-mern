@@ -322,12 +322,11 @@ const Home = () => {
         userId: user._id
       })
     }
-  }, [socket, user])
+  }, [socket, user._id])
 
   useEffect(() => {
     if (socket) {
       const handleRideConfirmed = (rideData) => {
-        console.log("Ride confirmed:", rideData);
         setVehicleFound(false);
         setRide(rideData);
         setWaitingForDriver(true);
@@ -336,7 +335,6 @@ const Home = () => {
       };
 
       const handleRideStarted = (rideData) => {
-        console.log("Ride started:", rideData);
         setWaitingForDriver(false);
         navigate('/riding', { state: { ride: rideData } });
 
@@ -344,7 +342,6 @@ const Home = () => {
       };
 
       const handleRideEnded = (rideData) => {
-        console.log("Ride ended:", rideData);
         // Handle ride end logic
         navigate('/home');
 
@@ -369,7 +366,6 @@ const Home = () => {
 
   const handleLogout = async () => {
     try {
-      // toast.loading("logging out...")
 
       const res = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/logout`,
@@ -400,13 +396,15 @@ const Home = () => {
       />
 
       {/* Align Logout button to top right */}
-      <div className="absolute top-5 right-5 z-1">
+      <div className="absolute top-5 right-5 z-50">
+
         <LogoutButton onClick={handleLogout} />
       </div>
 
-      <div className='h-screen w-screen'>
+      <div className="absolute top-0 left-0 w-full h-full z-0">
         <LiveTracking role="user" />
       </div>
+
 
       {/* Trip card */}
 

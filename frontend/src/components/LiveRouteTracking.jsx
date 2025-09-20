@@ -3,84 +3,27 @@ import { MapContext } from "../context/MapContext";
 import { captainDataContext } from "../context/CaptainContext";
 import { LoadScript, GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import axios from "axios";
+import MapLoader from "./MapLoader";
 
 const containerStyle = {
   width: "100%",
   height: "100%",
 };
 
-// Uber dark map theme
-// const uberMapStyle = [
-//   { elementType: "geometry", stylers: [{ color: "#212121" }] },
-//   { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-//   { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-//   { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
-//   {
-//     featureType: "administrative",
-//     elementType: "geometry",
-//     stylers: [{ color: "#757575" }],
-//   },
-//   {
-//     featureType: "poi",
-//     elementType: "geometry",
-//     stylers: [{ color: "#181818" }],
-//   },
-//   {
-//     featureType: "poi.park",
-//     elementType: "geometry",
-//     stylers: [{ color: "#181818" }],
-//   },
-//   {
-//     featureType: "road",
-//     elementType: "geometry.fill",
-//     stylers: [{ color: "#2c2c2c" }],
-//   },
-//   {
-//     featureType: "road",
-//     elementType: "geometry.stroke",
-//     stylers: [{ color: "#1f1f1f" }],
-//   },
-//   {
-//     featureType: "road.highway",
-//     elementType: "geometry",
-//     stylers: [{ color: "#3c3c3c" }],
-//   },
-//   {
-//     featureType: "transit",
-//     elementType: "geometry",
-//     stylers: [{ color: "#2f2f2f" }],
-//   },
-//   {
-//     featureType: "water",
-//     elementType: "geometry",
-//     stylers: [{ color: "#000000" }],
-//   },
-//   {
-//     featureType: "water",
-//     elementType: "labels.text.fill",
-//     stylers: [{ color: "#3d3d3d" }],
-//   },
-// ];
-
-const uberLightMapStyle = [
+const uberLightTheme = [
   { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+  { elementType: "labels.icon", stylers: [{ visibility: "on" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
-  {
-    featureType: "administrative.land_parcel",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#bdbdbd" }],
-  },
   {
     featureType: "poi",
     elementType: "geometry",
     stylers: [{ color: "#eeeeee" }],
   },
   {
-    featureType: "poi.park",
-    elementType: "geometry",
-    stylers: [{ color: "#e5e5e5" }],
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#757575" }],
   },
   {
     featureType: "road",
@@ -123,87 +66,18 @@ const uberLightMapStyle = [
     stylers: [{ color: "#9e9e9e" }],
   },
 ];
-const uberLightTheme = [
-  {
-    "elementType": "geometry",
-    "stylers": [{ "color": "#f5f5f5" }]
-  },
-  {
-    "elementType": "labels.icon",
-    "stylers": [{ "visibility": "on" }]   // POIs stay visible
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#616161" }]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [{ "color": "#f5f5f5" }]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [{ "color": "#eeeeee" }]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#757575" }]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [{ "color": "#ffffff" }]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#757575" }]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [{ "color": "#dadada" }]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#616161" }]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#9e9e9e" }]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [{ "color": "#e5e5e5" }]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [{ "color": "#c9c9c9" }]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#9e9e9e" }]
-  }
-];
-
-const res = axios.get("map/")
 
 const vehicleIcon = {
-  url: "https://static.vecteezy.com/system/resources/previews/029/947/412/non_2x/white-city-car-isolated-on-transparent-background-3d-rendering-illustration-free-png.png", // Example vehicle icon, replace with your own if needed
+  url: "https://static.vecteezy.com/system/resources/previews/029/947/412/non_2x/white-city-car-isolated-on-transparent-background-3d-rendering-illustration-free-png.png",
   scaledSize: { width: 40, height: 40 },
   anchor: { x: 20, y: 20 },
 };
 
 const userIcon = {
-  url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7uACgyiKt5pU7HEX5okhp4ZzkdHO0mjlHXw&s", // Example vehicle icon, replace with your own if needed
-  scaledSize: { width: 15, height: 15 }
+  url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7uACgyiKt5pU7HEX5okhp4ZzkdHO0mjlHXw&s",
+  scaledSize: { width: 15, height: 15 },
 };
+
 const LiveRouteTracking = () => {
   const {
     captainLocation,
@@ -218,28 +92,27 @@ const LiveRouteTracking = () => {
   const { captain } = useContext(captainDataContext);
   const [directions, setDirections] = useState(null);
 
+  //For captain's current location -----> Captain Side
   useEffect(() => {
     if (captain?.location) {
       setCaptainLocation(captain.location);
     }
   }, [captain?.location, setCaptainLocation]);
-  
+
   const getCoords = async (address) => {
     try {
-
-      if(typeof address == "string" && address.trim() !== ""){
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/map/get-coords`, {
-          params: {
-            address: pickupLocation
+      if (typeof address === "string" && address.trim() !== "") {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/map/get-coords`,
+          {
+            params: { address: pickupLocation },
           }
-        });
-        
+        );
+
         if (response.data) {
           return response.data;
         }
-      }
-      else
-      {
+      } else {
         return address;
       }
     } catch (error) {
@@ -247,21 +120,17 @@ const LiveRouteTracking = () => {
       return null;
     }
   };
-  useEffect(() => {
-    try{
-      const fetchCoordinates = async () => {
-        if (!pickupLocation) return;
-        const coords = await getCoords(pickupLocation);
-        if (coords) {
-          setPickupLocation(coords);
-        }
-      };
-      fetchCoordinates();
-    } catch (error) {
-      console.error("Error fetching coordinates:", error);
-    }
-  }, [pickupLocation,setPickupLocation]);
 
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      if (!pickupLocation) return;
+      const coords = await getCoords(pickupLocation);
+      if (coords) {
+        setPickupLocation(coords);
+      }
+    };
+    fetchCoordinates();
+  }, [pickupLocation, setPickupLocation]);
 
   useEffect(() => {
     if (captainLocation && pickupLocation) {
@@ -272,8 +141,11 @@ const LiveRouteTracking = () => {
     }
   }, [captainLocation, pickupLocation, setRoutePoints]);
 
-  useEffect(() => {
-    if (routePoints.origin && routePoints.destination && window.google) {
+  const mapCenter =
+    routePoints.origin || pickupLocation || { lat: 23.0225, lng: 72.5714 };
+
+  const handleLoad = () => {
+    if (routePoints.origin && routePoints.destination) {
       const directionsService = new window.google.maps.DirectionsService();
       directionsService.route(
         {
@@ -291,9 +163,7 @@ const LiveRouteTracking = () => {
         }
       );
     }
-  }, [routePoints]);
-
-  const mapCenter = routePoints.origin || pickupLocation || { lat: 23.0225, lng: 72.5714 };
+  };
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
@@ -302,6 +172,7 @@ const LiveRouteTracking = () => {
           mapContainerStyle={containerStyle}
           center={mapCenter}
           zoom={15}
+          onLoad={handleLoad}
           options={{
             disableDefaultUI: true,
             styles: uberLightTheme,
@@ -328,7 +199,7 @@ const LiveRouteTracking = () => {
                   strokeWeight: 4,
                   strokeOpacity: 0.9,
                 },
-                suppressMarkers: true, 
+                suppressMarkers: true,
               }}
             />
           )}
