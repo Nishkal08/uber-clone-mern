@@ -150,14 +150,14 @@ const CaptainLogin = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "0.5rem", // same as other buttons
+                borderRadius: "0.5rem",
                 overflow: "hidden",
               },
             }}
             style={{
               width: "100%",
               minHeight: "48px",
-              borderRadius: "0.5rem", // match your UI buttons
+              borderRadius: "0.5rem", 
               fontSize: "1rem",
               fontWeight: 600,
             }}
