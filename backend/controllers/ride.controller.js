@@ -97,7 +97,6 @@ const confirmRide = async(req,res) => {
             rideId,
             captainId:req.captain?._id}
         )
-        console.log("ride : ",ride);
         
         sendMessageToUser(
             ride.user.socketId,

@@ -16,6 +16,8 @@ import UserProtectWrapper from './pages/UserProtectWrapper.jsx'
 import { CaptainProtectWrapper } from './pages/CaptainProtectWrapper.jsx'
 import CaptainRiding from './pages/CaptainRiding.jsx'
 import Riding from './pages/Riding.jsx'
+import PaymentSuccess from './pages/PaymentSuccess.jsx'
+import PaymentFailed from './pages/PaymentFailure.jsx'
 
 function App() {
   return (
@@ -43,6 +45,8 @@ function App() {
             <CaptainRiding />
           </CaptainProtectWrapper>
         } />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failed" element={<PaymentFailed />} />
       </Routes>
 
       <Toaster

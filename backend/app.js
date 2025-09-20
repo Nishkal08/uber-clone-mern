@@ -9,7 +9,7 @@ const captainRoutes = require("./routes/captain.routes")
 const mapRoutes = require("./routes/map.routes")
 const rideRoutes = require("./routes/ride.routes")
 const cookieParser = require("cookie-parser")
-
+const paymentRoutes = require("./routes/payment.routes")
 // Updated CORS configuration
 app.use(cors({
   origin: [
@@ -36,5 +36,6 @@ app.use("/users",userRoutes)
 app.use("/captains", captainRoutes)
 app.use("/map",mapRoutes)
 app.use("/ride",rideRoutes)
+app.use("/payment",paymentRoutes)
 
-module.exports = app
+module.exports = app    

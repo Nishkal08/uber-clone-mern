@@ -43,7 +43,7 @@ export const ConfirmRide = ({
 
             <span className='text-black text-2xl font-semibold mt-3 p-4'>Confirm your Ride</span>
 
-            <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center'>    
                 <img
                     className="h-25 my-3"
                     src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_538,w_956/v1688398971/assets/29/fbb8b0-75b1-4e2a-8533-3a364e7042fa/original/UberSelect-White.png"

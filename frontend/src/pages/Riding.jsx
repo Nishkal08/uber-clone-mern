@@ -4,9 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { MapContext } from '../context/MapContext'
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios'
 import LiveRouteTracking from '../components/LiveRouteTracking'
+import { loadStripe } from "@stripe/stripe-js";
+
 
 const Riding = () => {
     const location = useLocation()
@@ -14,6 +16,7 @@ const Riding = () => {
     const ride = location.state?.ride
     const { socket } = useContext(SocketContext)
     const { setPickupLocation, setDropLocation, setCaptainLocation } = useContext(MapContext)
+    const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 
     const getCaptainLocation = async () => {
@@ -39,7 +42,7 @@ const Riding = () => {
             const intervalId = setInterval(() => {
                 console.warn("Fetching captain location...", getCaptainLocation());
                 getCaptainLocation();
-            }, 1000 * 60 *2); // Fetch captain location every 2 minutes
+            }, 1000 * 60 * 2); // Fetch captain location every 2 minutes
 
             // Cleanup interval on unmount or ride change
             return () => clearInterval(intervalId);
@@ -49,6 +52,24 @@ const Riding = () => {
     socket.on("ride-ended", () => {
         navigate("/home")
     })
+
+    const handlePayment = async () => {
+        try {
+            const stripe = await stripePromise;
+            toast.loading()
+            const response = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/payment/create-checkout-session`,
+                { amount: ride.fare }
+            );
+
+            const { url } = response.data;
+            window.location.href = url; // redirect to Stripe checkout
+        } catch (error) {
+            console.error(error);
+            toast.error("Payment failed. Try again.");
+        }
+    };
+
     return (
         <div>
             <img className='w-15 absolute top-5 left-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
@@ -89,7 +110,7 @@ const Riding = () => {
                         </div>
                         <div className='w-full px-3 mt-6'>
                             <button
-                                // onClick={}
+                                onClick={handlePayment}
                                 className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-4 py-3'
                             >
                                 Make A Payment

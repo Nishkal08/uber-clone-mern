@@ -7,12 +7,14 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { captainDataContext } from '../context/CaptainContext'
 import toast from 'react-hot-toast';
+
 const CaptainLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { setCaptain } = useContext(captainDataContext)
+  
   const submitHandler = async (e) => {
     e.preventDefault()
     try {
@@ -88,7 +90,6 @@ const CaptainLogin = () => {
     }
   }
 
-
   return (
     <div className='h-screen px-7 py-5 flex flex-col gap-4'>
       <img className="w-19" src="https://www.svgrepo.com/show/505031/uber-driver.svg"></img>
@@ -110,7 +111,7 @@ const CaptainLogin = () => {
             setPassword(e.target.value)
           }}
         />
-        {password.length >= 0 && password.length < 6 && (
+        {password.length > 0 && password.length < 6 && (
           <p className="text-red-500 text-sm mb-5">Password must be at least 6 characters long</p>
         )}
 
@@ -118,42 +119,62 @@ const CaptainLogin = () => {
           <div className="mb-7"></div>
         )}
 
-        <button type="submit" className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white'>
+        <button 
+          type="submit" 
+          className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white disabled:opacity-50 disabled:cursor-not-allowed'
+          disabled={isLoading}
+        >
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
 
         {/* or --- separator */}
-        <div className="flex items-center my-4">
+        <div className="flex items-center my-6">
           <hr className="flex-grow border-gray-300" />
           <span className="mx-2 text-gray-500">or</span>
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        <div className="flex flex-col items-center w-full gap-4 mt-4">
-          <div className="w-full">
+        {/* Fixed Google Login Button - Full Width */}
+        <div className="w-full mb-4">
+          <div 
+            className="w-full flex justify-center items-center"
+            style={{ minHeight: '48px' }}
+          >
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => toast.error("Google sign in failed")}
               size="large"
-              shape="square"
+              theme="outline"
+              text="signin_with"
+              shape="rectangular"
+              logo_alignment="center"
               width="100%"
+              containerProps={{
+                style: { width: '100%' }
+              }}
+              style={{
+                width: '100%',
+                minWidth: '100%'
+              }}
             />
           </div>
-          <Link
-            to='/user-login'
-            className='w-full max-w-xs py-2 px-4 border-2 border-black rounded-lg bg-white hover:bg-gray-100 transition-colors duration-200 font-semibold text-black text-center'
-          >
-            Sign in as User
-          </Link>
         </div>
 
+        {/* Sign in as User Button - Matching Style */}
+        <Link
+          to='/user-login'
+          className='w-full py-3 px-4 border-2 border-black rounded-lg bg-white hover:bg-gray-100 transition-colors duration-200 font-semibold text-black text-center text-lg flex justify-center items-center'
+        >
+          Sign in as User
+        </Link>
+
       </form>
-      <div>
+      
+      <div className="mt-4">
         <p className='text-center'>
           Join a fleet? <Link to='/captain-signup' className='text-blue-600'>Register as captain</Link>
         </p>
       </div>
-
     </div>
   )
 }
