@@ -1,11 +1,17 @@
-# uber-clone-mern
-This is a uber-clone build using MERN stack
+## Backend API Documentation
+
+### Base URL
+
+```
+http://localhost:<PORT>/
+```
+
+---
 
 ## User API Endpoints
 
 ### 1. Register User
-- **Endpoint:** `POST /api/user/register`
-- **Description:** Registers a new user with email, password, and full name.
+- **Endpoint:** `POST /users/register`
 - **Request Body:**
   ```json
   {
@@ -18,27 +24,16 @@ This is a uber-clone build using MERN stack
   }
   ```
 - **Response:**
-  - `201 Created` on success
-  - Returns the created user object and JWT token
+  - `201 Created`
   ```json
   {
-    "user": {
-      "_id": "...",
-      "fullname": { "firstname": "John", "lastname": "Doe" },
-      "email": "user@example.com",
-      ...
-    },
+    "user": { ... },
     "token": "<jwt-token>"
   }
   ```
-- **Validation Errors:**
-  - Invalid email, short password, or missing first name will return `400` with error details.
-
----
 
 ### 2. Login User
-- **Endpoint:** `POST /api/user/login`
-- **Description:** Authenticates a user and returns a JWT token.
+- **Endpoint:** `POST /users/login`
 - **Request Body:**
   ```json
   {
@@ -47,8 +42,7 @@ This is a uber-clone build using MERN stack
   }
   ```
 - **Response:**
-  - `200 OK` on success
-  - Returns user object, JWT token, and message
+  - `200 OK`
   ```json
   {
     "user": { ... },
@@ -56,18 +50,12 @@ This is a uber-clone build using MERN stack
     "message": "Login successful"
   }
   ```
-- **Validation Errors:**
-  - Invalid credentials or missing fields will return `400` with error details.
-
----
 
 ### 3. Get User Profile
-- **Endpoint:** `GET /api/user/profile`
-- **Description:** Returns the authenticated user's profile.
-- **Headers:**
-  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Endpoint:** `GET /users/profile`
+- **Headers:** `Authorization: Bearer <jwt-token>`
 - **Response:**
-  - `200 OK` with user profile object
+  - `200 OK`
   ```json
   {
     "_id": "...",
@@ -76,34 +64,25 @@ This is a uber-clone build using MERN stack
     ...
   }
   ```
-- **Errors:**
-  - `401 Unauthorized` if token is missing, invalid, or blacklisted.
-
----
 
 ### 4. Logout User
-- **Endpoint:** `POST /api/user/logout`
-- **Description:** Logs out the user by blacklisting the JWT token.
-- **Headers:**
-  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Endpoint:** `POST /users/logout`
+- **Headers:** `Authorization: Bearer <jwt-token>`
 - **Response:**
-  - `200 OK` with message and expired token
+  - `200 OK`
   ```json
   {
     "message": "Logout successful",
     "expiredToken": "<jwt-token>"
   }
   ```
-- **Errors:**
-  - `401 Unauthorized` if token is missing, invalid, or already blacklisted.
 
 ---
 
 ## Captain API Endpoints
 
 ### 1. Register Captain
-- **Endpoint:** `POST /api/captain/register`
-- **Description:** Registers a new captain with email, password, full name, and vehicle details.
+- **Endpoint:** `POST /captains/register`
 - **Request Body:**
   ```json
   {
@@ -122,33 +101,16 @@ This is a uber-clone build using MERN stack
   }
   ```
 - **Response:**
-  - `201 Created` on success
-  - Returns the created captain object and JWT token
+  - `201 Created`
   ```json
   {
-    "captain": {
-      "_id": "...",
-      "fullname": { "firstname": "Jane", "lastname": "Smith" },
-      "email": "captain@example.com",
-      "vehicle": {
-        "plate": "XYZ123",
-        "vehicleType": "car",
-        "color": "Red",
-        "capacity": 4
-      },
-      ...
-    },
+    "captain": { ... },
     "token": "<jwt-token>"
   }
   ```
-- **Validation Errors:**
-  - Invalid email, short password, missing fields, or invalid vehicle details will return `400` or `401` with error details.
-
----
 
 ### 2. Login Captain
-- **Endpoint:** `POST /api/captain/login`
-- **Description:** Authenticates a captain and returns a JWT token.
+- **Endpoint:** `POST /captains/login`
 - **Request Body:**
   ```json
   {
@@ -157,60 +119,194 @@ This is a uber-clone build using MERN stack
   }
   ```
 - **Response:**
-  - `200 OK` on success
-  - Returns captain object and JWT token
+  - `200 OK`
   ```json
   {
     "captain": { ... },
     "token": "<jwt-token>"
   }
   ```
-- **Validation Errors:**
-  - Invalid credentials or missing fields will return `400` with error details.
-
----
 
 ### 3. Get Captain Profile
-- **Endpoint:** `GET /api/captain/profile`
-- **Description:** Returns the authenticated captain's profile.
-- **Headers:**
-  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Endpoint:** `GET /captains/profile`
+- **Headers:** `Authorization: Bearer <jwt-token>`
 - **Response:**
-  - `200 OK` with captain profile object
+  - `200 OK`
   ```json
   {
     "_id": "...",
     "fullname": { "firstname": "Jane", "lastname": "Smith" },
     "email": "captain@example.com",
-    "vehicle": {
-      "plate": "XYZ123",
-      "vehicleType": "car",
-      "color": "Red",
-      "capacity": 4
-    },
-    ...
+    "vehicle": { ... }
   }
   ```
-- **Errors:**
-  - `401 Unauthorized` if token is missing, invalid, or blacklisted.
-
----
 
 ### 4. Logout Captain
-- **Endpoint:** `POST /api/captain/logout`
-- **Description:** Logs out the captain by blacklisting the JWT token.
-- **Headers:**
-  - `Authorization: Bearer <jwt-token>` or cookie `token=<jwt-token>`
+- **Endpoint:** `POST /captains/logout`
+- **Headers:** `Authorization: Bearer <jwt-token>`
 - **Response:**
-  - `200 OK` with message
+  - `200 OK`
   ```json
   {
     "message": "Logout successful"
   }
   ```
-- **Errors:**
-  - `401 Unauthorized` if token is missing, invalid, or already blacklisted.
 
 ---
 
-**Note:** All endpoints are prefixed with `/users` for user APIs and `/captains` for captain APIs (adjust if your route prefix differs in your main app).
+## Ride API Endpoints
+
+### 1. Get Fares
+- **Endpoint:** `GET /ride/get-fares`
+- **Query Params:** `pickup`, `destination`
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "moto": 25,
+    "auto": 40,
+    "car": 80
+  }
+  ```
+
+### 2. Create Ride
+- **Endpoint:** `POST /ride/create-ride`
+- **Request Body:**
+  ```json
+  {
+    "pickup": "Location A",
+    "destination": "Location B",
+    "vehicleType": "car"
+  }
+  ```
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `201 Created`
+  ```json
+  {
+    "ride": { ... }
+  }
+  ```
+
+### 3. Confirm Ride (Captain)
+- **Endpoint:** `POST /ride/confirm-ride`
+- **Request Body:**
+  ```json
+  {
+    "rideId": "<ride-id>",
+    "captainId": "<captain-id>"
+  }
+  ```
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "ride": { ... }
+  }
+  ```
+
+### 4. Start Ride (Captain)
+- **Endpoint:** `POST /ride/start-ride`
+- **Request Body:**
+  ```json
+  {
+    "rideId": "<ride-id>",
+    "otp": "123456"
+  }
+  ```
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "ride": { ... }
+  }
+  ```
+
+### 5. End Ride (Captain)
+- **Endpoint:** `POST /ride/end-ride`
+- **Request Body:**
+  ```json
+  {
+    "rideId": "<ride-id>"
+  }
+  ```
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "ride": { ... }
+  }
+  ```
+
+---
+
+## Map API Endpoints
+
+### 1. Get Coordinates
+- **Endpoint:** `GET /map/get-coordinates`
+- **Query Params:** `address`
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "lat": 12.9716,
+    "lng": 77.5946
+  }
+  ```
+
+### 2. Get Distance & Time
+- **Endpoint:** `GET /map/get-distance-time`
+- **Query Params:** `origin`, `destination`
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "distance": { "text": "5 km", "value": 5000 },
+    "duration": { "text": "15 mins", "value": 900 }
+  }
+  ```
+
+### 3. Get Suggestions
+- **Endpoint:** `GET /map/get-suggestions`
+- **Query Params:** `location`
+- **Headers:** `Authorization: Bearer <jwt-token>`
+- **Response:**
+  - `200 OK`
+  ```json
+  [
+    "Location A",
+    "Location B",
+    ...
+  ]
+  ```
+
+---
+
+## Payment API Endpoints
+
+### 1. Create Checkout Session
+- **Endpoint:** `POST /payment/create-checkout-session`
+- **Request Body:**
+  ```json
+  {
+    "amount": 100
+  }
+  ```
+- **Response:**
+  - `200 OK`
+  ```json
+  {
+    "id": "<stripe-session-id>",
+    "url": "<stripe-checkout-url>"
+  }
+  ```
+
+---
+
+**Note:** All endpoints require proper authentication via JWT token in the `Authorization` header or cookie unless specified otherwise.
