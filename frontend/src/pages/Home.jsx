@@ -195,6 +195,7 @@ const Home = () => {
         height: "fit-content",
       })
       gsap.to(panelRef.current, {
+        zIndex: 52,
         y: 0,
         height: "80%",
         duration: 0.8,
@@ -395,7 +396,6 @@ const Home = () => {
         alt="Uber Logo"
       />
 
-      {/* Align Logout button to top right */}
       <div className="absolute top-5 right-5 z-50">
 
         <LogoutButton onClick={handleLogout} />
@@ -454,7 +454,6 @@ const Home = () => {
           </button>
         </div>
 
-        {/* Location selection panel */}
         <div ref={panelRef} className='bg-white h-0 translate-y-full overflow-auto'>
           <LocationPanel
             setPanelOpen={setPanelOpen}
