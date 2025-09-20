@@ -9,6 +9,7 @@ router.post("/create-checkout-session", async (req, res) => {
     const { amount } = req.body; 
 
     const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
       mode: "payment",
       line_items: [
         {
@@ -22,7 +23,7 @@ router.post("/create-checkout-session", async (req, res) => {
           quantity: 1,
         },
       ],
-      automatic_payment_methods: { enabled: true }, 
+      
       success_url: `${process.env.CLIENT_URL}/payment-success`,
       cancel_url: `${process.env.CLIENT_URL}/payment-failed`,
     });

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import React from "react";
 const PaymentFailed = () => {
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
