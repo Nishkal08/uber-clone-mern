@@ -52,6 +52,8 @@ const authCaptain = async (req,res,next) => {
     try{
         const decodedToken = jwt.verify(token,process.env.JWT_SECRET_KEY)
         const captain = await captainModel.findById(decodedToken._id) 
+        console.warn("Captain : ",captain)
+        console.warn("decodedToken._id : ",decodedToken._id)
         if(!captain)
         {
             return res.status(401).json({message:"Captain Not Found"})
