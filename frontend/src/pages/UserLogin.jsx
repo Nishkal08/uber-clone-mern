@@ -99,7 +99,7 @@ const UserLogin = () => {
 
   return (
     <div className='h-screen p-7 flex flex-col gap-7'>
-    
+
       <img className="w-16 mb-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber logo" />
 
       <form onSubmit={submitHandler}>
@@ -147,14 +147,24 @@ const UserLogin = () => {
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        <div className="mt-4 w-full flex justify-center">
-          <div className="w-full">
+        <div className="w-full">
+          <div
+            className="w-full flex justify-center items-center"
+            style={{ minHeight: '56px' }} // Match your button height
+          >
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => toast.error("Google sign in failed")}
               size="large"
-              shape="square"
+              theme="outline"
+              text="signin_with"
+              shape="rectangular"
+              logo_alignment="center"
               width="100%"
+              style={{
+                width: '100%',
+                minWidth: '100%'
+              }}
             />
           </div>
         </div>
