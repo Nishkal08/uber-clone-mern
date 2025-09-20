@@ -185,9 +185,6 @@ export const CaptainHome = () => {
 
   return (
     <div>
-      <div>
-        {captain?.socketId}
-      </div>
       <div className="fixed flex top-1 p-4 items-center w-screen justify-between z-100">
         <img className='w-15 top-5 left-5 ' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"></img>
         <div className="absolute top-5 right-5 z-10">
@@ -215,6 +212,7 @@ export const CaptainHome = () => {
           ref={ConfirmRidePopUpRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white-100'
         >
           <ConfirmRidePopup
+            className="z-20"
             ride={ride}
             ConfirmRidePopUpCloseRef={ConfirmRidePopUpCloseRef}
             setridePopUpPanel={setridePopUpPanel}
