@@ -18,7 +18,6 @@ const Riding = () => {
     const { setPickupLocation, setDropLocation, setCaptainLocation } = useContext(MapContext)
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-
     const getCaptainLocation = async () => {
         const captainLocation = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/location/${ride.captain._id}`)
         // console.warn("-------------Fetched captain location:", captainLocation.data);
@@ -30,12 +29,10 @@ const Riding = () => {
     useEffect(() => {
         if (ride) {
 
-            // Set captain location if available
             setCaptainLocation(ride.captain?.location);
             if (ride.pickup) {
                 setPickupLocation(ride.pickup);
             }
-            // Set drop location if available
             if (ride.drop) {
                 setDropLocation(ride.drop);
             }
@@ -44,7 +41,6 @@ const Riding = () => {
                 getCaptainLocation();
             }, 1000 * 60 * 2); // Fetch captain location every 2 minutes
 
-            // Cleanup interval on unmount or ride change
             return () => clearInterval(intervalId);
         }
     }, [ride, setPickupLocation, setDropLocation]);
@@ -55,15 +51,17 @@ const Riding = () => {
 
     const handlePayment = async () => {
         try {
-            const stripe = await stripePromise;
+
+            toast.success("Real-Time transaction won't happen")
             toast.loading()
+            const stripe = await stripePromise;
             const response = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/payment/create-checkout-session`,
                 { amount: ride.fare }
             );
 
             const { url } = response.data;
-            window.location.href = url; // redirect to Stripe checkout
+            window.location.href = url;
         } catch (error) {
             console.error(error);
             toast.error("Payment failed. Try again.");
@@ -77,11 +75,9 @@ const Riding = () => {
                 <i class="ri-home-2-line"></i>
             </Link>
             <div className='h-screen w-screen relative'>
-                {/* LiveTracking Map fills top half */}
                 <div className="absolute top-0 left-0 w-full h-1/2 z-0">
                     <LiveRouteTracking />
                 </div>
-                {/* Driver detail card overlays bottom half */}
                 <div className='absolute bottom-0 left-0 w-full h-1/2 z-10 bg-white rounded-t-2xl shadow-2xl'>
                     <div className='flex flex-col'>
                         <div className='flex w-full px-4 my-3 justify-between items-center'>
@@ -108,13 +104,17 @@ const Riding = () => {
                                 <span className='tex-sm text-[#545454]'>Cash</span>
                             </div>
                         </div>
-                        <div className='w-full px-3 mt-6'>
+                        <div className='w-full px-3 mt-6 flex flex-col items-center'>
                             <button
                                 onClick={handlePayment}
-                                className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-4 py-3'
+                                className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-2 py-3'
                             >
                                 Make A Payment
                             </button>
+                          
+                            <span className='text-sm text-gray-800 text-center bg-yellow-200 px-3 py-1 rounded'>
+                                Real-time transaction won't happen dw
+                            </span>
                         </div>
                     </div>
                 </div>

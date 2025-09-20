@@ -12,6 +12,7 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            toast.loading("Starting ride...")
             const res = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/ride/start-ride`,
                 {
@@ -48,6 +49,10 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
         }
     };
 
+    const ignoreHandler = () => {
+        setConfirmRidePopUpPanel(false);
+        setridePopUpPanel(false);
+    }
     return (
         <div className='bg-white h-screen w-full rounded-md overflow-auto relative py-2'>
             <div
@@ -117,9 +122,7 @@ const ConfirmRidePopup = ({ ride, ConfirmRidePopUpCloseRef, setridePopUpPanel, s
                     </form>
                     <button
                         className='w-full flex justify-center items-center bg-neutral-50  border-black border-2 rounded-lg font-semibold mb-4 py-3'
-                        onClick={() => {
-                            setridePopUpPanel(false)
-                        }}
+                        onClick={ignoreHandler}
                     >
                         Ignore
                     </button>
