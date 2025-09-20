@@ -14,7 +14,7 @@ const CaptainLogin = () => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { setCaptain } = useContext(captainDataContext)
-  
+
   const submitHandler = async (e) => {
     e.preventDefault()
     try {
@@ -119,8 +119,8 @@ const CaptainLogin = () => {
           <div className="mb-7"></div>
         )}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className='rounded-lg p-3 w-full text-lg font-semibold bg-black flex justify-center items-center text-white disabled:opacity-50 disabled:cursor-not-allowed'
           disabled={isLoading}
         >
@@ -134,33 +134,37 @@ const CaptainLogin = () => {
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        {/* Fixed Google Login Button - Full Width */}
         <div className="w-full mb-4">
-          <div 
-            className="w-full flex justify-center items-center"
-            style={{ minHeight: '48px' }}
-          >
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => toast.error("Google sign in failed")}
-              size="large"
-              theme="outline"
-              text="signin_with"
-              shape="rectangular"
-              logo_alignment="center"
-              width="100%"
-              containerProps={{
-                style: { width: '100%' }
-              }}
-              style={{
-                width: '100%',
-                minWidth: '100%'
-              }}
-            />
-          </div>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => toast.error("Google sign in failed")}
+            size="large"
+            theme="outline"
+            text="signin_with"
+            shape="rectangular"
+            width="100%"
+            containerProps={{
+              style: {
+                width: "100%",
+                minHeight: "48px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "0.5rem", // same as other buttons
+                overflow: "hidden",
+              },
+            }}
+            style={{
+              width: "100%",
+              minHeight: "48px",
+              borderRadius: "0.5rem", // match your UI buttons
+              fontSize: "1rem",
+              fontWeight: 600,
+            }}
+          />
         </div>
 
-        {/* Sign in as User Button - Matching Style */}
+
         <Link
           to='/user-login'
           className='w-full py-3 px-4 border-2 border-black rounded-lg bg-white hover:bg-gray-100 transition-colors duration-200 font-semibold text-black text-center text-lg flex justify-center items-center'
@@ -169,7 +173,7 @@ const CaptainLogin = () => {
         </Link>
 
       </form>
-      
+
       <div className="mt-4">
         <p className='text-center'>
           Join a fleet? <Link to='/captain-signup' className='text-blue-600'>Register as captain</Link>
