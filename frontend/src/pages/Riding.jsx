@@ -52,8 +52,7 @@ const Riding = () => {
     const handlePayment = async () => {
         try {
 
-            toast.success("Real-Time transaction won't happen")
-            toast.loading()
+            toast.loading("Processing payment...")
             const stripe = await stripePromise;
             const response = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/payment/create-checkout-session`,
@@ -107,14 +106,19 @@ const Riding = () => {
                         <div className='w-full px-3 mt-6 flex flex-col items-center'>
                             <button
                                 onClick={handlePayment}
-                                className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-2 py-3'
+                                className='w-full flex flex-col justify-center items-center bg-black text-white rounded-lg font-semibold mb-4 py-3 hover:bg-gray-900 transition-colors'
                             >
                                 Make A Payment
                             </button>
-                          
-                            <span className='text-sm text-gray-800 text-center bg-yellow-200 px-3 py-1 rounded'>
-                                Real-time transaction won't happen dw
-                            </span>
+
+                            <div className='w-full bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-center'>
+                                <svg className="w-4 h-4 text-blue-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span className='text-sm text-blue-800 text-center font-medium'>
+                                    Demo Mode: This is a test payment - no real money will be charged
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
