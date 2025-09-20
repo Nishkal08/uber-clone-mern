@@ -9,7 +9,7 @@ router.post("/create-checkout-session", async (req, res) => {
     const { amount } = req.body; 
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card","upi"],
+      payment_method_types: ["card","paypal"],
       mode: "payment",
       line_items: [
         {
@@ -42,5 +42,5 @@ router.get("/test", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-  
+
 module.exports = router;
