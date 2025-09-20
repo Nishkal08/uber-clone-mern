@@ -9,7 +9,19 @@ const captainRoutes = require("./routes/captain.routes")
 const mapRoutes = require("./routes/map.routes")
 const rideRoutes = require("./routes/ride.routes")
 const cookieParser = require("cookie-parser")
-app.use(cors())
+
+// Updated CORS configuration
+app.use(cors({
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+    'https://uber-clone-frontend-mern.onrender.com' 
+  ],
+  credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
+
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(cookieParser())
