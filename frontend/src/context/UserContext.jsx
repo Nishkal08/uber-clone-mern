@@ -8,7 +8,7 @@ const UserContext = ({children}) => {
             firstname:"",
             lastname:""
         },
-        email:"",
+        email:""
     })
     return (
     <userDataContext.Provider value={{user,setUser}}>

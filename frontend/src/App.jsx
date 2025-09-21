@@ -18,8 +18,16 @@ import CaptainRiding from './pages/CaptainRiding.jsx'
 import Riding from './pages/Riding.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import PaymentFailed from './pages/PaymentFailure.jsx'
+import Footer from './components/Footer.jsx'
+import { useLocation } from 'react-router-dom';
 
 function App() {
+  const location = useLocation();
+  const hideFooterRoutes = ['/riding','/home','/captain-ride','/captain-home'];
+
+
+  const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
+
   return (
     <>
       <Routes>
@@ -49,6 +57,8 @@ function App() {
         <Route path="/payment-failed" element={<PaymentFailed />} />
       </Routes>
 
+      {shouldShowFooter && <Footer />}
+
       <Toaster
         position="top-center"
         toastOptions={{
@@ -62,23 +72,23 @@ function App() {
           },
           success: {
             style: {
-              background: '#f9fafb',     
-              color: '#374151',          
-              border: '1px solid #d1fae5', 
+              background: '#f9fafb',
+              color: '#374151',
+              border: '1px solid #d1fae5',
             },
             iconTheme: {
-              primary: '#10b981',        
+              primary: '#10b981',
               secondary: '#f9fafb',
             },
           },
           error: {
             style: {
-              background: '#f9fafb',    
-              color: '#374151',          
-              border: '1px solid #fecaca', 
+              background: '#f9fafb',
+              color: '#374151',
+              border: '1px solid #fecaca',
             },
             iconTheme: {
-              primary: '#ef4444',        
+              primary: '#ef4444',
               secondary: '#f9fafb',
             },
           },
