@@ -3,6 +3,7 @@ const { getFares } = require("../services/ride.service")
 const rideService = require("../services/ride.service")
 const mapService = require("../services/map.service")
 const rideModel = require("../models/ride.model")
+const userModel = require("../models/user.model")
 const {sendMessageToUser} = require("../socket")
 const getFare = async(req,res) => {
 
@@ -157,8 +158,10 @@ const endRide = async(req,res) => {
     }
     console.log("End control : ",ride)
     console.warn("id : ",ride.user.socketId)
+    
+    const user = await userModel.findById(ride.user._id)
     sendMessageToUser(
-        ride.user.socketId,
+        user.socketId,
         {
             event:"ride-ended",data:ride
         }

@@ -22,12 +22,6 @@ import Footer from './components/Footer.jsx'
 import { useLocation } from 'react-router-dom';
 
 function App() {
-  const location = useLocation();
-  const hideFooterRoutes = ['/riding','/home','/captain-ride','/captain-home'];
-
-
-  const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
-
   return (
     <>
       <Routes>
@@ -57,7 +51,6 @@ function App() {
         <Route path="/payment-failed" element={<PaymentFailed />} />
       </Routes>
 
-      {shouldShowFooter && <Footer />}
 
       <Toaster
         position="top-center"

@@ -50,26 +50,21 @@ const CaptainRiding = () => {
 
   return (
     <div>
-      {/* UBER icons and all */}
       <div className="fixed flex top-1 p-4 items-center w-screen justify-between z-20">
         <img className='h-10' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber" />
         <Link to='/home' className='h-10 w-10 bg-white flex items-center justify-center text-xl rounded-3xl'>
           <i className="ri-logout-box-line"></i>
         </Link>
       </div>
-      {/* bg-img/Map */}
       <div className='h-screen'>
         <LiveRouteTracking className="absolute" />
-        {/* bottom-card */}
         <div className='fixed bottom-0 left-0 w-full z-10'>
           <div className='w-full bg-white flex flex-col px-5 pt-4 pb-6 rounded-t-2xl shadow-2xl'>
-            {/* Arrow centered at the top */}
             <div className='flex justify-center mb-2'>
               <div className='text-gray-300 font-medium text-3xl cursor-pointer'>
                 <i className="ri-arrow-up-wide-line"></i>
               </div>
             </div>
-            {/* Info row */}
             <div className='flex justify-between items-center'>
               <div className='flex items-center gap-4'>
                 <img className="h-12 w-12 object-cover rounded-full" src="https://mrwallpaper.com/images/hd/beautiful-woman-with-random-people-in-background-roumbpovzh5jzxj5.jpg" alt="User" />
@@ -78,7 +73,6 @@ const CaptainRiding = () => {
                   <div className='text-sm leading-3 text-gray-400'>Away</div>
                 </div>
               </div>
-              {/* Button */}
               <button
                 className='h-12 w-1/4 px-6 flex justify-center items-center bg-black text-white rounded-lg font-semibold'
                 onClick={() => setFinishRidePopUp(true)}

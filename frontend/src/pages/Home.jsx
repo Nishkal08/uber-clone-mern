@@ -183,7 +183,6 @@ const Home = () => {
       return res.data;
     } catch (err) {
       console.log("Error creating ride", err.response?.data || err.message)
-      toast.error('Error creating ride. Please try again.');
       throw err;
     }
   }
@@ -343,18 +342,16 @@ const Home = () => {
       };
 
       const handleRideEnded = (rideData) => {
-        // Handle ride end logic
         navigate('/home');
 
         toast.success('Ride completed successfully!');
       };
 
-      // Add event listeners
+     
       socket.on("ride-confirmed", handleRideConfirmed);
       socket.on("ride-started", handleRideStarted);
       socket.on("ride-ended", handleRideEnded);
 
-      // Cleanup function
       return () => {
         socket.off("ride-confirmed", handleRideConfirmed);
         socket.off("ride-started", handleRideStarted);

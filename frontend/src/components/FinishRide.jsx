@@ -76,7 +76,6 @@ const FinishRide = ({ setFinishRidePopUp, ride, finishRideCloseRef }) => {
                         <span className='tex-sm text-[#545454]'>Cash</span>
                     </div>
                 </div>
-                {/* bottom navigation */}
                 <div className='w-full px-3 mt-6'>
                     <button to="/captain-home"
                         onClick={finishRide}

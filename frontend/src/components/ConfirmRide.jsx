@@ -16,6 +16,7 @@ export const ConfirmRide = ({
     const { ride, setRide } = useContext(RideDataContext)
     const handleConfirmRide = async () => {
         try {
+            toast.loading("Confirming ride...")
             const ride = await createRide(pickup, destination, vehicleType)
             console.log("Ride created:", ride)
             setRide({ ride })
