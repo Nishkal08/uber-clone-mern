@@ -18,8 +18,6 @@ import CaptainRiding from './pages/CaptainRiding.jsx'
 import Riding from './pages/Riding.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import PaymentFailed from './pages/PaymentFailure.jsx'
-import Footer from './components/Footer.jsx'
-import { useLocation } from 'react-router-dom';
 
 function App() {
   return (

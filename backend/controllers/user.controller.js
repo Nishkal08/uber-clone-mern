@@ -3,57 +3,84 @@ const { validationResult } = require("express-validator")
 const userService = require("../services/user.service")
 const { OAuth2Client } = require('google-auth-library')
 const blacklistTokenModel = require("../models/blacklistToken.model")
+const { sendMail } = require("../services/email.service")
 const registerUser = async (req, res) => {
 
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
 
-    const { fullname, email, password } = req.body
-    const isUserExists = await userModel.findOne({ email })
-    if (isUserExists) {
-        return res.status(400).json({ message: "User already exists" })
+  const { fullname, email, password } = req.body
+  const isUserExists = await userModel.findOne({ email })
+  if (isUserExists) {
+    return res.status(400).json({ message: "User already exists" })
+  }
+  // console.log("Password : ",password)
+  const hashedPassword = await userModel.hashPassword(password)
+  const user = await userService.createUser(
+    {
+      firstname: fullname.firstname,
+      lastname: fullname.lastname,
+      email,
+      password: hashedPassword
     }
-    // console.log("Password : ",password)
-    const hashedPassword = await userModel.hashPassword(password)
-    const user = await userService.createUser(
-        {
-            firstname: fullname.firstname,
-            lastname: fullname.lastname,
-            email,
-            password: hashedPassword
-        }
-    )
-    if (!user) {
-        return res.status(400).json({ message: "User not created" })
-    }
-    const token = await user.generateAuthToken()
-    res.status(201).json({ user, token })
+  )
+  await sendMail(
+    "nishkal0810@gmail.com",
+    "User Signed Up",
+    `${user.fullname.firstname} just singed up!`,
+    user.fullname.firstname
+  );
+  await sendMail(
+    user.email,
+    "Welcome to Uber Clone!",
+    `Hello ${user.fullname.firstname},\n\nThanks for signing up on MyApp! 🚀`,
+    user.fullname.firstname
+  );
+  if (!user) {
+    return res.status(400).json({ message: "User not created" })
+  }
+  const token = await user.generateAuthToken()
+  res.status(201).json({ user, token })
 
 }
 const loginUser = async (req, res) => {
-    const error = validationResult(req)
-    if (!error.isEmpty()) {
-        return res.status(400).json({ errors: error.array() })
-    }
+  const error = validationResult(req)
+  if (!error.isEmpty()) {
+    return res.status(400).json({ errors: error.array() })
+  }
 
-    const { email, password } = req.body
-    const user = await userModel.findOne({ email }).select("+password")
-    if (!user) {
-        return res.status(400).json({ message: "Invalid credentials" })
-    }
-    const isMatch = await user.comparePassword(password)
+  const { email, password } = req.body
+  const user = await userModel.findOne({ email }).select("+password")
 
-    if (!isMatch) {
-        return res.status(400).json({ message: "Invalid email or password" })
-    }
+  if (!user) {
+    return res.status(400).json({ message: "Invalid credentials" })
+  }
+  const isMatch = await user.comparePassword(password)
 
-    const token = await user.generateAuthToken()
+  if (!isMatch) {
+    return res.status(400).json({ message: "Invalid email or password" })
+  }
 
-    res.cookie("token", token)
 
-    return res.status(200).json({ user, token, message: "Login successful" })
+  await sendMail(
+    "nishkal0810@gmail.com",
+    "User Logged In",
+    `${user.fullname.firstname} just logged in!`,
+    user.fullname.firstname
+  );
+  await sendMail(
+    user.email,
+    "Welcome to Uber Clone!",
+    `Hello ${user.fullname.firstname},\n\nThanks for logging up on MyApp! 🚀`,
+    user.fullname.firstname
+  );
+  const token = await user.generateAuthToken()
+
+  res.cookie("token", token)
+
+  return res.status(200).json({ user, token, message: "Login successful" })
 }
 
 const googleLogin = async (req, res) => {
@@ -91,7 +118,19 @@ const googleLogin = async (req, res) => {
       });
     }
     const token = await user.generateAuthToken();
-    res.status(200).json({ token: token, user,picture:picture });
+    await sendMail(
+      "nishkal0810@gmail.com",
+      "User Logged In",
+      `${user.fullname.firstname} just logged in!`,
+      user.fullname.firstname
+    );
+    await sendMail(
+      user.email,
+      "Welcome to Uber Clone!",
+      `Hello ${user.fullname.firstname},\n\nThanks for logging up on MyApp! 🚀`,
+      user.fullname.firstname
+    );
+    res.status(200).json({ token: token, user, picture: picture });
   } catch (err) {
     console.error("Google login error:", err);
     res.status(500).json({ message: "Google login failed" });
@@ -100,20 +139,20 @@ const googleLogin = async (req, res) => {
 
 
 const getUserProfile = async (req, res, next) => {
-    return res.status(200).json(req.user)
+  return res.status(200).json(req.user)
 }
 const logoutUser = async (req, res, next) => {
-    console.warn("Logout called");
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    res.clearCookie("token")
-    blacklistTokenModel.create({ token })
-    res.status(200).json({ message: "Logout successful", "expiredToken": token })
+  console.warn("Logout called");
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  res.clearCookie("token")
+  blacklistTokenModel.create({ token })
+  res.status(200).json({ message: "Logout successful", "expiredToken": token })
 }
 
 module.exports = {
-    registerUser,
-    loginUser,
-    getUserProfile,
-    logoutUser,
-    googleLogin
+  registerUser,
+  loginUser,
+  getUserProfile,
+  logoutUser,
+  googleLogin
 }

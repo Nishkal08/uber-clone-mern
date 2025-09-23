@@ -111,13 +111,30 @@ const Riding = () => {
                                 Make A Payment
                             </button>
 
-                            <div className='w-full bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-center'>
-                                <svg className="w-4 h-4 text-blue-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className='text-sm text-blue-800 text-center font-medium'>
-                                    Demo Mode: This is a test payment - no real money will be charged
-                                </span>
+                            {/* Enhanced Test Mode Warning */}
+                            <div className='w-full bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 mb-4'>
+                                <div className='flex items-start gap-3'>
+                                    <div className='flex-shrink-0'>
+                                        <svg className="w-6 h-6 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 18.5c-.77.833.192 2.5 1.732 2.5z" />
+                                        </svg>
+                                    </div>
+                                    <div className='flex-1'>
+                                        <h4 className='font-semibold text-amber-800 mb-2'>⚠️ Test Mode Active</h4>
+                                        <div className='text-sm text-amber-700 space-y-2'>
+                                            <p className='font-medium'>
+                                                🔒 <strong>No real transactions will occur</strong> - Your account will not be charged
+                                            </p>
+                                            <div className='bg-white bg-opacity-70 rounded-lg p-3 border border-amber-200'>
+                                                <p className='font-medium text-amber-800 mb-1'>For testing, use this card number only:</p>
+                                                <div className='bg-gray-50 rounded px-3 py-2 font-mono text-lg font-bold text-gray-800 letter-spacing-wide border'>
+                                                    4000 0035 6000 0008
+                                                </div>
+                                                <p className='text-xs text-amber-600 mt-1'>Use any future date for expiry & any 3-digit CVV</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

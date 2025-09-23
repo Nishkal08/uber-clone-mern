@@ -171,16 +171,16 @@ const UserLogin = () => {
 
       </form>
 
-      <div>
-        <p className='text-center'>
-          New here? <Link to='/user-signup' className='text-blue-600'>Create new Account</Link>
-        </p>
-      </div>
 
       <div className='absolute bottom-0 left-0 right-0 p-7'>
+        <div>
+          <p className='text-center'>
+            New here? <Link to='/user-signup' className='text-blue-600'>Create new Account</Link>
+          </p>
+        </div>
         <Link
           to='/captain-login'
-          className='bg-white flex items-center justify-center text-black ring-2 font-semibold mb-3 rounded-lg p-4 w-full text-lg placeholder:text-base'
+          className='bg-white flex  items-center justify-center text-black ring-2 font-semibold mt-3 rounded-lg p-4 w-full text-lg placeholder:text-base'
         >
           Sign in as Captain
         </Link>
