@@ -17,6 +17,7 @@ import { CaptainProtectWrapper } from './pages/CaptainProtectWrapper.jsx'
 import CaptainRiding from './pages/CaptainRiding.jsx'
 import Riding from './pages/Riding.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
+import NotFound404 from './pages/NotFound404.jsx'
 import PaymentFailed from './pages/PaymentFailure.jsx'
 
 function App() {
@@ -47,6 +48,9 @@ function App() {
         } />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failed" element={<PaymentFailed />} />
+                
+        <Route path="*" element={<NotFound404 />} />
+
       </Routes>
 
 
