@@ -20,6 +20,7 @@ const UserLogin = () => {
     setIsLoading(true)
 
     try {
+      toast.loading('Logging in...')
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, {
         email,
         password

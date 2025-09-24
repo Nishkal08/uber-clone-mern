@@ -177,7 +177,7 @@ const Home = () => {
       );
 
       console.log("Ride created successfully:", res.data);
-      setRide(res.data.ride); // Store the ride data
+      setRide(res.data.ride); 
       setConfirmRide(false);
       setVehicleFound(true);
       return res.data;
@@ -403,7 +403,6 @@ const Home = () => {
       </div>
 
 
-      {/* Trip card */}
 
       <div className="flex flex-col justify-end h-screen absolute top-0 w-full z-2">
         <div ref={findMyTrip} className='bg-white min-h-fit p-5 relative' >

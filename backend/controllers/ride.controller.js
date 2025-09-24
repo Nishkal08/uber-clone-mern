@@ -157,7 +157,6 @@ const endRide = async(req,res) => {
         return res.status(400).json({message:"Ride not found"});
     }
     console.log("End control : ",ride)
-    console.warn("id : ",ride.user.socketId)
     
     const user = await userModel.findById(ride.user._id)
     sendMessageToUser(

@@ -1,34 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { SocketContext } from '../context/SocketContext'
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PaymentSuccess = () => {
+  const { socket } = useContext(SocketContext)
+  const navigate = useNavigate();
+  socket.on("ride-ended", () => {
+    navigate("/home")
+  })
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4 relative overflow-hidden">
-      
+
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-green-200/30 rounded-full blur-3xl"></div>
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/4 left-1/3 w-56 h-56 bg-purple-200/30 rounded-full blur-3xl"></div>
-        
+
         <div className="absolute inset-0 opacity-5" style={{
           backgroundImage: `radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0)`,
           backgroundSize: '20px 20px'
         }}></div>
       </div>
       <div className="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-10 flex flex-col items-center text-center max-w-md w-full border border-white/20 relative z-10">
-        
+
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 opacity-0 animate-fadeIn transform scale-95 animate-scaleIn">
-          <svg 
-            className="w-12 h-12 text-green-600" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-12 h-12 text-green-600"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
             strokeWidth={2}
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              d="M5 13l4 4L19 7" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
             />
           </svg>
         </div>
