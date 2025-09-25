@@ -1,14 +1,15 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.sendgrid.net",
+    port: 587,
     auth: {
-        user: "nishkal0810@gmail.com",
-        pass: "ntsu gmjo lnui tkgq",
+        user: "apikey",
+        pass: process.env.SENDGRID_API_KEY,
     },
 });
 
-const sendMail = async (to, subject, text,name) => {
+const sendMail = async (to, subject, text, name) => {
     try {
         await transporter.sendMail({
             from: `"Uber" <nishkal0810@gmail.com>`,

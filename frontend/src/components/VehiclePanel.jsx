@@ -20,7 +20,6 @@ export const VehiclePanel = ({ vehiclePanelCloseRef,setVehicleType, distanceTime
                 <i className="ri-arrow-down-wide-line"></i>
             </div>
             <h3 className='text-2xl font-semibold mb-5 mt-3'>Choose a Vehicle</h3>
-            {/* Vehicle card container */}
             <div className='flex flex-col h-fit items-center gap-3 '>
                 <div onClick={() => handleClick("motorcycle")}
                     key="1" className='h-fit p-3 active:border-black active:border-3 rounded-xl w-full'>
